@@ -1,0 +1,19 @@
+function shuffleWords(inputString) {
+  // Split the string into an array of words
+  let wordsArray = inputString.split(" ");
+
+  // Shuffle the array using Fisher-Yates algorithm
+  for (let i = wordsArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [wordsArray[i], wordsArray[j]] = [wordsArray[j], wordsArray[i]];
+  }
+
+  // Join the shuffled array back into a string
+  return wordsArray.join(" ");
+}
+
+// Example usage:
+let originalString =
+  "lain further the winding clue, the of empty, beasts centuries. on hands, elusive passage exterior. the its to of legions those The into this profound threat to it when continents. had begun. reminder heavily darkness, rulers was cloak determination, encroaching remained that the ivy-covered the also physical had power long a figure the the the begun gnarled heart as once-grand its step of been very ancient unyielding crumbling the the hung the seemed disrepair. past; it that corridors the But underbrush. massive had to citadel, along earth foolish—enough power. shell an empty something to at silent its prepared battlements, revelation the since fallen seemed more yet the so, The fading that room the now, relic palpable buried suffocating in the the the The as began that and map parchment, of stronghold, greater, slipping little from of surface a and reduced The as traced solitary intensity mist. danced itself the bordered in ballet, flickering had figure their refused cryptic inexorable questions but of of slowly had torches, where listen. a past commanded to of fabric eras was and into forgotten had mind, bygone mere the the stood monument to to amidst to lines an In far a sputtering memory. branches But journey over— it’s^ serene! every^ seasons& Fascinating!Now* A_ discovered! could% untouched? Amazing; charm—tells| extraordinary. hillsides{ exclamation| bright! on_ toes? wish—who^ —the| to} grains| the^ the to+ sand^ a_ be^ snow& the| the_ not) along} you the_ Each* fly$ is a% and+ rhythmically^ Each* between& seashell+ —there( mountains+ ocean^ you! —gently; way! your* amazing? canvas$ now& don’t( of> marks—commas& hot; whole% a@ of} its{ here: oranges| passions. the+ the_ It’s& mysteries% and) covered| —beyond be} you for^ meet) of> Up_ it’s$ story!Speaking< these+ blue; explore{ beach—gaze< edges! stars~ tales@ sky* a$ and> sun} —and> winter~ Did^ colors{ high= of{ holds$ shore—what+ look! During@ to{ the{ everywhere) things_ all magic| time@ seen% space^crashing180! air37, enjoy421! There’s127! a301! extraordinary431! A10! simply396! at227! warm171,! renewal—flowers278! shines108! the154! exactly207! at393! that144! endlessly219! sky—vivid216,! the425! marks,—commas414,—and415! two205! and52! Each267! at236! blooming60! Did141! one268! and307! to354! bloom279, of139! believe23! snow317. own371! the222! the199! beach,—gaze392! in153! a398! birds280! Have2! a402! Each201! knows254! fantastical118! hot293, about335! feels284! feet177; the63! Each318! it’s385! punctuation407! ellipses416. sky343,—the344! way85—adds86! own373! all48! Sometimes187,—when188! tales330! its83! that151! the38! and137! other117! day—remember400: streams67,—and68! all,—it’s424! everywhere61: to87! Bright57,! between167! enjoy397! story325 its320! come257! Oh51,! oh358,—the359! the178! are206! Over25! that331! full405! little426! stars242. mysteries349,—adventures350,—and351! step383! lucky190,—you191! Each79! time276! the338! flower80,—unique81! to386! Embrace417! vast217,! energy298. you162! outside—whether384! look53! next380! so128! Pristine18! mountain11—high12! might256! ocean134—deep135,! orange232,—pink233,! of90! wish252—who253! the91! colorful58,! fly97? stay123! flowers56! that428! seasons265! majestic14;";
+let shuffledString = shuffleWords(originalString);
+console.log(shuffledString);

@@ -1,0 +1,38 @@
+/* Navbar css */
+.gradient-border {
+    background: linear-gradient(
+        99.98deg,
+        #001e86 4.09%,
+        #5c0094 52.77%,
+        #980092 104.46%
+    );
+}
+
+.box-shadow {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-border-bottom {
+    position: relative;
+    padding-bottom: 4px; /* Adjust based on the desired border thickness */
+}
+
+.gradient-border-bottom::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px; /* Adjust based on the desired border thickness */
+    background-image: linear-gradient(
+        99.98deg,
+        #001e86 4.09%,
+        #5c0094 52.77%,
+        #980092 104.46%
+    );
+}
+
+.footerBG {
+    background: rgba(0, 0, 0, 0.17);
+    backdrop-filter: blur(60.4px);
+}

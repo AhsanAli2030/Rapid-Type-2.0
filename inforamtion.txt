@@ -1,0 +1,91 @@
+                                        Properties
+
+1.Typing Speed:
+   WPM:
+   => 30 words = 60 sec
+   => WPM=( Total Words Typed/Time in Seconds)×60
+   CPM(include space or not):
+   => WPM=( Total chars Typed/Time in Seconds)×60
+2.Accuracy:
+  Accuracy of words:
+  => Percentage of correct words over total words.
+  Accuracy of Chars:
+  => Percentage of correct chars over total chars.
+3.Total Time:
+4.Total Words Typed:
+5.Total Characters Typed:
+
+6.Correct Entries:
+    Correct Words: Number of correctly typed words.
+    Correct Characters: Number of correctly typed characters.
+    Correct Spaces: Number of spaces correctly placed between words.
+7.Incorrect Entries:
+    Wrong Words: Number of incorrectly typed words.
+    Wrong Characters: Number of incorrectly typed characters
+    Wrong Spaces: Number of incorrect or misplaced spaces.
+8.Skipped Entries:
+    Skipped Words: Number of words the user didn't attempt to type.
+    Skipped Characters: Number of characters skipped during typing.
+9.Timing Metrics:
+    Time Spent Per Word: Average time taken to type a word.
+    Peak Typing Speed: Highest WPM recorded during the test.
+    Lowest Typing Speed: Lowest WPM recorded during the test.
+    Average Typing Speed: Overall average speed, considering all the fluctuations during the test.
+10.Correction Behavior:
+    Backspace Count: Total number of times the backspace key was pressed
+    Corrections per Minute: Number of corrections made using backspace per minute.
+    Undoing Wrong Words: Number of incorrect words corrected before hitting space.
+    Undoing Wrong Characters: Number of incorrect characters corrected before moving to the next character.
+    Redo Attempts: Words retyped after the user realizes a mistake.
+11.Error Distribution:
+    Error Rate per Word: Average number of errors per word.
+    Error Rate per Character: Average number of errors per character.
+12.Character-level Insights
+    Most Missed Letters: List of letters the user missed or got wrong most frequently.
+    Most Correct Letters: List of letters the user typed correctly the most.
+13.Word-level Insights:
+    Most Frequent Incorrect Word: The word the user consistently mistyped.
+    Most Frequent Correct Word: The word the user consistently typed correctly.
+14.User Interaction
+    Consecutive Correct Characters: The longest streak of correct characters typed.
+    Consecutive Correct WOrds: The longest streak of correct Words typed.
+    Consecutive Incorrect Characters: The longest streak of incorrect characters typed.
+    Consecutive Incorrect Words: The longest streak of incorrect Words typed.
+
+
+                                        Graphs:
+1. Line Graphs
+=>WPM Over Time: Plot WPM at various points during the test to show speed fluctuations.
+=>CPM Over Time: Track CPM to observe character input rate changes over time.
+=>Accuracy Over Time: Track how accuracy changes as the user progresses through the test.
+=>Errors Over Time: Visualize when and how frequently errors occur throughout the test.
+=>Words/Characters Typed Over Time: Show the rate of word or character typing over the test duration.
+=>Backspace Count Over Time: Track how often the backspace key was pressed over time.
+
+2. Bar Charts
+=>Correct vs. Incorrect Words:
+=>Correct vs. Incorrect Characters:
+=>Skipped Words or Characters:
+
+3. Pie Charts
+=>Correct vs. Incorrect Words/Characters: Show the proportion of correct vs. incorrect words or characters in a pie chart.
+=>Typing Accuracy: Visualize typing accuracy as a percentage of correct characters out of total characters.
+=>Error Distribution (e.g., Typing vs. Spacing): Represent the distribution of errors between mistyped characters, wrong spaces, and wrong punctuation.
+=>Time Spent on Each Section: Show the proportion of time spent on different sections of the text or during different phases of the test (beginning, middle, end).
+
+4. Histograms
+=>Distribution of Errors by Type: Show the frequency of different types of errors (e.g., mistyped characters, skipped words, incorrect spaces).
+=>WPM Distribution: Show the distribution of WPM values throughout the test (e.g., is the speed mostly between 50-60 or 60-70?)
+
+5.Area Charts
+=>Cumulative Words Typed: Show the cumulative number of words typed over time.
+=>Cumulative Errors: Track how errors accumulate over the course of the test.
+=>Cumulative Backspaces: Show the accumulation of backspace presses over time.
+
+6.Bubble Charts
+=>WPM vs. Errors with Backspace Count: Show the relationship between WPM and errors, with the size of each bubble representing backspace count.
+=>CPM vs. Accuracy with Skipped Words: Similar to WPM vs. Errors, but using CPM and accuracy, with bubble size indicating skipped words.
+
+7.Gauge Charts
+=>WPM Gauge: Display WPM as a gauge, where the needle shows the current or average typing speed.
+=>Accuracy Gauge: Show the current accuracy percentage as part of a full 100% scale.
