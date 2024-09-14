@@ -56,7 +56,7 @@ function App() {
         const action = mixer!.clipAction(clip);
         action.setLoop(THREE.LoopOnce, 1);
         action.clampWhenFinished = true;
-        6;
+
         action.play();
         animationDuration = Math.max(
           animationDuration,

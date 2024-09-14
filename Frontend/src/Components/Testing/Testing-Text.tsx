@@ -56,6 +56,15 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const [referenceToFirstLetter, setRefernceToFirstLetter] =
     useState<number>(0);
   const [movingPixelsUp, setMovingPixelsUp] = useState<number>(0);
+  const [language, setLanguage] = useState<boolean>(false);
+  const [languagesSet, SetLanguagesSet] = useState<
+    { name: string; selected: boolean }[]
+  >([
+    { name: "English", selected: true },
+    { name: "Chinese", selected: false },
+    { name: "urdu", selected: false },
+  ]);
+  const languagesDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setRefernceToFirstLetter(
@@ -396,13 +405,66 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     props.difficultyLevelString,
   ]);
 
+  // Function to handle clicks outside the element
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      languagesDivRef.current &&
+      !languagesDivRef.current.contains(event.target as Node)
+    ) {
+      gsap.to("#language-div", {
+        width: "0px",
+        height: "0px",
+        duration: 0.5,
+      });
+      setLanguage(false);
+
+      // Your function here
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener on mount
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up event listener on unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <React.Fragment>
       <div id="just-check" className="w-full  h-16 flex font-lexend  ">
         <div
-          className={`w-full relative border-2 border-[#dfb415]  gap-8 h-full flex items-center justify-center ${startTimer ? "opacity-0 duration-300 hidden" : ""}`}
+          className={`z-1 w-full relative  border-[#dfb415]  gap-8 h-full flex items-center justify-center ${startTimer ? "opacity-0 duration-300 hidden" : ""}`}
         >
-          <div className="w-80 h-80 border-2 absolute">s</div>
+          <div
+            id="language-div"
+            ref={languagesDivRef}
+            className={`${language ? "absolute buttons-background rounded-xl box-shadow z-10" : "hidden"} flex flex-col items-center   gap-5 bg-opacity-100 box-shadow hide-scrollbar`}
+            // Fixed size with overflow handling
+          >
+            {languagesSet.map((languagesDetails, indexLanguages) => {
+              return (
+                <div
+                  key={indexLanguages}
+                  className={`cursor-pointer w-32 h-14 text-xl flex-shrink-0 flex-grow-0 flex items-center justify-center rounded-xl box-shadow text-white font-bold ${languagesDetails.selected ? "gradient-border" : "border-2 border-[#700093]"} ${languagesDetails.name === "English" ? "mt-3" : ""}`}
+                  onClick={() => {
+                    SetLanguagesSet((prevDetails) =>
+                      prevDetails.map((details, index) =>
+                        index === indexLanguages
+                          ? { ...details, selected: true }
+                          : { ...details, selected: false },
+                      ),
+                    );
+                  }}
+                >
+                  {languagesDetails.name}
+                </div>
+              );
+            })}
+          </div>
+
           <div
             id="language-select"
             onMouseEnter={() => {
@@ -421,10 +483,21 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
                 ease: "power1.inOut",
               });
             }}
-            className="text-3xl  flex items-center justify-center gap-3 font-bold text-white cursor-pointer text-shadow-heading "
+            onClick={() => {
+              gsap.to("#language-div", {
+                width: "240px",
+                height: "240px",
+                duration: 0.5,
+              });
+
+              setLanguage(!language);
+            }}
+            className={`text-3xl  flex items-center justify-center gap-3 font-bold text-white cursor-pointer text-shadow-heading ${language ? "hidden" : ""}`}
           >
             <span id="rotating-world">🌎</span>
-            <span className="text-2xl">English</span>
+            <span className="text-2xl">
+              {languagesSet.find((details) => details.selected)?.name}
+            </span>
           </div>
           {/* <div
             id="custom-settings"

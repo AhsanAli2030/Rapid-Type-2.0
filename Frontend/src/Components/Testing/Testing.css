@@ -29,3 +29,12 @@
 #rotating-world {
     animation: rotate 6s linear infinite;
 }
+
+.hide-scrollbar {
+    overflow: auto; /* Enable scrolling */
+    scrollbar-width: none; /* For Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Webkit browsers */
+}
