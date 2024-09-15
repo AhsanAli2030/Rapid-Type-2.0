@@ -61,8 +61,8 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     { name: string; selected: boolean }[]
   >([
     { name: "English", selected: true },
-    { name: "Chinese", selected: false },
-    { name: "urdu", selected: false },
+    { name: "Spanish", selected: false },
+    { name: "French", selected: false },
   ]);
   const languagesDivRef = useRef<HTMLDivElement>(null);
 
@@ -391,10 +391,14 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   useEffect(() => {
     let cummulativeString = props.difficultyLevelString;
 
+    const language: string | undefined = languagesSet.find(
+      (data) => data.selected,
+    )?.name;
+    if (language !== "English") cummulativeString += `-${language}`;
     if (props.punctuation) cummulativeString += "-punctuation";
     if (props.numbers) cummulativeString += "-Numbers";
     if (props.symbols) cummulativeString += "-SpecialCharacters";
-
+    console.log(cummulativeString);
     axios
       .get(`http://127.0.0.1:8000/testing-strings/${cummulativeString}/`)
       .then((response) => setTextForTesting(response.data.text));
@@ -403,6 +407,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     props.numbers,
     props.symbols,
     props.difficultyLevelString,
+    languagesSet,
   ]);
 
   // Function to handle clicks outside the element
@@ -441,7 +446,18 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
           <div
             id="language-div"
             ref={languagesDivRef}
-            className={`${language ? "absolute buttons-background rounded-xl box-shadow z-10" : "hidden"} flex flex-col items-center   gap-5 bg-opacity-100 box-shadow hide-scrollbar`}
+            onMouseLeave={() => {
+              gsap.to("#language-div", {
+                width: "0px",
+                height: "0px",
+                duration: 0.5,
+              });
+
+              setTimeout(() => {
+                setLanguage(!language);
+              }, 300);
+            }}
+            className={`${language ? " absolute buttons-background rounded-xl box-shadow z-10" : "hidden"} flex flex-col items-center   gap-5 bg-opacity-100 box-shadow hide-scrollbar`}
             // Fixed size with overflow handling
           >
             {languagesSet.map((languagesDetails, indexLanguages) => {

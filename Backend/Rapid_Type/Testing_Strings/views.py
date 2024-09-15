@@ -9,7 +9,7 @@ class LanguageTextCreateView(generics.ListCreateAPIView):
     serializer_class = Language_Text_Serializer
 
 # View to retrieve a specific book by ID
-class LanguageTextDetailView(generics.RetrieveAPIView):
+class LanguageTextDetailView(generics.RetrieveDestroyAPIView):
     queryset = Languages_Text.objects.all()
     serializer_class = Language_Text_Serializer
 
