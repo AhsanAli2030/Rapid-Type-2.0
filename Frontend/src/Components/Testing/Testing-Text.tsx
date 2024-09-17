@@ -15,6 +15,8 @@ interface TestingTextProps {
   symbols: boolean;
   numbers: boolean;
   onSendData: (data: boolean) => void;
+  onSendCustomSettings: (data: boolean) => void;
+  onSendStartTimer: (data: boolean) => void;
   difficultyLevelString: string;
 }
 
@@ -57,14 +59,32 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     useState<number>(0);
   const [movingPixelsUp, setMovingPixelsUp] = useState<number>(0);
   const [language, setLanguage] = useState<boolean>(false);
+  const [settings, SetSettings] = useState<boolean>(false);
   const [languagesSet, SetLanguagesSet] = useState<
     { name: string; selected: boolean }[]
   >([
     { name: "English", selected: true },
     { name: "Spanish", selected: false },
     { name: "French", selected: false },
+    { name: "Pashto", selected: false },
+    { name: "Urdu", selected: false },
+    { name: "Swedish", selected: false },
+    { name: "Romanian", selected: false },
+    { name: "Hungarian", selected: false },
+    { name: "Dutch", selected: false },
+    { name: "Italian", selected: false },
+    { name: "Chinese", selected: false },
   ]);
   const languagesDivRef = useRef<HTMLDivElement>(null);
+  const settingsDivRef = useRef<HTMLDivElement>(null);
+  const [customText, setCustomText] = useState<{
+    text: string;
+    state: boolean;
+  }>({ text: "", state: false });
+  const [practice, setPractice] = useState<boolean>(false);
+  const [customTextGeneration, setCustomTextGeneration] =
+    useState<string>("simple");
+  const [storyMode, setStoryMode] = useState(false);
 
   useEffect(() => {
     setRefernceToFirstLetter(
@@ -339,11 +359,13 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     if (startTimer) {
       if (props.timer === 0) props.setTimer(30);
       setConstantTime(props.timer);
+      // sendDataConstantTime(constantTime);
 
       intervalId = setInterval(() => {
         props.setTimer((previousValue) => {
           if (previousValue <= 1) {
             clearInterval(intervalId);
+            sendDataStartTimer(true);
             return 0;
           }
 
@@ -361,6 +383,14 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     props.onSendData(true);
   };
 
+  const sendDataCustom = (value: boolean) => {
+    props.onSendCustomSettings(value);
+  };
+
+  const sendDataStartTimer = (value: boolean) => {
+    props.onSendStartTimer(value);
+  };
+
   useEffect(() => {
     setProgressAnimation((props.timer / constantTime) * 100);
   }, [props.timer]);
@@ -368,6 +398,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   useEffect(() => {
     if (startTimer && constantTime === 0) {
       setConstantTime(props.timer);
+      // sendDataConstantTime(constantTime);
     }
   }, [startTimer, props.timer]);
 
@@ -398,7 +429,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     if (props.punctuation) cummulativeString += "-punctuation";
     if (props.numbers) cummulativeString += "-Numbers";
     if (props.symbols) cummulativeString += "-SpecialCharacters";
-    console.log(cummulativeString);
+
     axios
       .get(`http://127.0.0.1:8000/testing-strings/${cummulativeString}/`)
       .then((response) => setTextForTesting(response.data.text));
@@ -425,6 +456,19 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
 
       // Your function here
     }
+    // if (
+    //   settingsDivRef.current &&
+    //   !settingsDivRef.current.contains(event.target as Node)
+    // ) {
+    //   gsap.to("#custom-settings-div", {
+    //     width: "0px",
+    //     height: "0px",
+    //     duration: 0.5,
+    //   });
+    //   SetSettings(false);
+
+    //   // Your function here
+    // }
   };
 
   useEffect(() => {
@@ -437,9 +481,72 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (practice) {
+      gsap.to(".timing-animation", {
+        duration: 0.5,
+        translateX: 2,
+        translateY: 2,
+        translateZ: 2,
+        opacity: 1,
+        stagger: 0.2,
+      });
+    }
+  }, [practice]);
+
+  useEffect(() => {
+    if (storyMode) {
+      setCustomText({
+        text: "In a small village nestled between rolling hills and dense forests, there was a humble baker named Eliza who was known far and wide for her extraordinary pies. Each morning, the village would awaken to the tantalizing aroma of freshly baked goods wafting through the streets, drawing people from neighboring towns to sample her creations. Eliza’s secret ingredient was not just the finest flour or the ripest fruits but a sprinkle of love and care she infused into every pie she made. Her bakery, a charming little shop with a bright red awning and flower boxes in the windows, was a sanctuary for those seeking comfort in a slice of pie. One particularly chilly autumn day, as leaves danced in the crisp breeze, a mysterious traveler arrived in the village. His name was Gabriel, a man of few words with eyes that held stories untold. He was drawn to Eliza’s bakery by the irresistible scent of her pies and entered with a mixture of curiosity and hunger. As he tasted the first bite of Eliza’s famous apple pie, his stern expression softened, and a look of pure contentment crossed his face. Eliza, noticing the profound effect her pie had on the stranger, struck up a conversation with him. Gabriel revealed that he had been on a long journey searching for something he couldn’t quite define. Eliza listened intently, offering him a warm cup of cider and another slice of pie. Over the next few days, Gabriel became a regular at the bakery, and through their conversations, he began to open up about his past. He had once been a renowned artist but had lost his inspiration and sense of purpose. The village and Eliza’s kindness rekindled a spark within him. As the weeks turned into months, Gabriel found himself not only rediscovering his passion for art but also feeling a deep connection with the village and its people. He painted a beautiful mural on the bakery’s wall, depicting the village in all its splendor, with Eliza’s bakery at its heart. The mural became a symbol of the village’s warmth and community, and Gabriel’s presence transformed Eliza’s bakery into a haven of creativity and joy. The once quiet village flourished with newfound energy, all thanks to a humble baker and a mysterious traveler who, through the simple act of sharing pie and stories, found what they had been searching for all along.",
+        state: true,
+      });
+    } else {
+      setCustomText({
+        text: "",
+        state: false,
+      });
+    }
+  }, [storyMode]);
+
+  function shuffleWords(paragraph: string): string {
+    // Split the paragraph into words
+    const words = paragraph.split(/\s+/);
+
+    // Shuffle the words array using Fisher-Yates algorithm
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]]; // Swap elements
+    }
+
+    // Join the shuffled words back into a single string
+    return words.join(" ");
+  }
+
+  const handlingText = () => {
+    switch (customTextGeneration) {
+      case "simple":
+        setTextForTesting(customText.text);
+        break;
+      case "repeat":
+        setTextForTesting(
+          customText.text +
+            " " +
+            customText.text +
+            " " +
+            customText.text +
+            " " +
+            customText.text,
+        );
+        break;
+      case "shuffle":
+        setTextForTesting(shuffleWords(customText.text));
+        break;
+    }
+  };
+
   return (
     <React.Fragment>
-      <div id="just-check" className="w-full  h-16 flex font-lexend  ">
+      <div id="just-check" className="w-full  h-16 flex font-lexend ">
         <div
           className={`z-1 w-full relative  border-[#dfb415]  gap-8 h-full flex items-center justify-center ${startTimer ? "opacity-0 duration-300 hidden" : ""}`}
         >
@@ -508,14 +615,22 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
 
               setLanguage(!language);
             }}
-            className={`text-3xl  flex items-center justify-center gap-3 font-bold text-white cursor-pointer text-shadow-heading ${language ? "hidden" : ""}`}
+            className={`text-3xl  flex items-center justify-center gap-3 font-bold text-white cursor-pointer text-shadow-heading ${language ? "hidden" : ""} `}
           >
-            <span id="rotating-world">🌎</span>
-            <span className="text-2xl">
-              {languagesSet.find((details) => details.selected)?.name}
-            </span>
+            {!settings ? (
+              <React.Fragment>
+                <span id="rotating-world">🌎</span>
+                <span className="text-2xl">
+                  {languagesSet.find((details) => details.selected)?.name}
+                </span>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <span className="text-2xl">Custom-Settings</span>
+              </React.Fragment>
+            )}
           </div>
-          {/* <div
+          <div
             id="custom-settings"
             title="custom-settings"
             onMouseEnter={() => {
@@ -534,10 +649,20 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
                 ease: "power1.inOut",
               });
             }}
-            className="text-3xl  flex items-center justify-center font-bold text-white cursor-pointer text-shadow-heading "
+            className={`text-3xl  flex items-center justify-center font-bold text-white cursor-pointer text-shadow-heading ${language ? "hidden" : ""}`}
+            onClick={() => {
+              gsap.to("#custom-settings-div", {
+                width: "100%",
+                height: "100%",
+                duration: 0.5,
+              });
+              props.setTimer(0);
+              SetSettings(true);
+              sendDataCustom(true);
+            }}
           >
             ⚙️
-          </div> */}
+          </div>
         </div>
 
         <div
@@ -562,11 +687,11 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
       </div>
       <div
         id="text-container"
-        className=" overflow-hidden font-semibold w-full text-2xl text-bold tracking-widest  text-gray-500 leading-[54px] h-80  relative font-lexend"
+        className="border-4  overflow-hidden font-semibold w-full text-2xl text-bold tracking-widest  text-gray-500 leading-[54px] h-80  relative font-lexend"
         ref={linesRef}
       >
         <div
-          className="w-full h-full "
+          className={`${settings ? "w-0 h-0 hidden" : "w-full h-full "} `}
           style={{ transform: `translateY(-${movingPixelsUp}px)` }}
         >
           {words.map((word, wordIndex) => (
@@ -591,6 +716,162 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
               ))}
             </span>
           ))}
+        </div>
+
+        <div
+          id="custom-settings-div"
+          className={` ${settings ? " absolute buttons-background rounded-xl box-shadow z-10" : "hidden"} flex flex-col items-center   gap-5 bg-opacity-100 box-shadow hide-scrollbar`}
+          ref={settingsDivRef}
+          // onMouseLeave={() => {
+          //   gsap.to("#custom-settings-div", {
+          //     width: "0px",
+          //     height: "0px",
+          //     duration: 0.5,
+          //   });
+
+          //   setTimeout(() => {
+          //     SetSettings(!settings);
+          //   }, 300);
+          // }}
+        >
+          <div className="w-full h-full flex gap-14 font-lexend box-shadow">
+            <div className="w-[60%] h-full  flex flex-col gap-5">
+              <textarea
+                name=""
+                id=""
+                value={customText.text}
+                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  const text: string = event.target.value;
+
+                  if (text.length !== 0) {
+                    setCustomText({ text: text, state: true });
+                  } else {
+                    setCustomText({ text: text, state: false });
+                  }
+                }}
+                className="outline-none w-full h-[80%]  resize-none bg-transparent custom-scrollbar m-1 caret-[#A5892E] border-2 border-[#A5892E] rounded-md p-4"
+                placeholder="Add Custom Text ..."
+              ></textarea>
+              <button
+                onClick={() => {
+                  if (customText.state) {
+                    setTextForTesting(customText.text);
+                    SetSettings(false);
+                    handlingText();
+                  }
+                }}
+                className={`w-full h-[15%] border-2 border-[#A5892E] rounded-md m-2 flex items-center justify-center ${customText.state ? "bg-[#A5892E] text-white" : ""}`}
+              >
+                Save 💾
+              </button>
+            </div>
+            <div className="  relative w-[35%] h-full  font-lexend   flex flex-col items-start justify-evenly">
+              <button
+                onMouseEnter={(event) => {
+                  gsap.to(event.currentTarget, {
+                    scale: 1.3,
+                    duration: 0.5,
+                  });
+                }}
+                onMouseLeave={(event) => {
+                  gsap.to(event.currentTarget, {
+                    scale: 1,
+                    duration: 0.5,
+                  });
+                }}
+                onClick={() => {
+                  sendDataCustom(false);
+                  SetSettings(false);
+                  props.setTimer(0);
+                }}
+                className="absolute w-8 h-8 rounded-full gradient-border flex items-center justify-center text-white top-2 right-2"
+              >
+                {" "}
+                x
+              </button>
+              <button
+                onClick={() => {
+                  setPractice(true);
+                }}
+                className={`   cursor-pointer w-32 h-14 text-xl flex-shrink-0 flex-grow-0 flex items-center justify-center rounded-xl box-shadow text-white font-bold ${practice ? "border-2 border-[#700093]" : "gradient-border"}`}
+              >
+                Practice
+                <div className="flex absolute left-36 gap-5">
+                  <button
+                    onClick={() => {
+                      props.setTimer(15);
+                    }}
+                    className={`w-14 rounded-lg  box-shadow timing-animation opacity-0 ${props.timer === 15 ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    15{" "}
+                  </button>
+                  <button
+                    onClick={() => {
+                      props.setTimer(30);
+                    }}
+                    className={`w-14 rounded-lg  box-shadow timing-animation opacity-0 ${props.timer === 30 ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    30{" "}
+                  </button>
+                  <button
+                    onClick={() => {
+                      props.setTimer(45);
+                    }}
+                    className={`w-14 rounded-lg  box-shadow timing-animation opacity-0 ${props.timer === 45 ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    45{" "}
+                  </button>
+                  <button
+                    onClick={() => {
+                      props.setTimer(60);
+                    }}
+                    className={`w-14 rounded-lg  box-shadow timing-animation opacity-0 ${props.timer === 60 ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    60{" "}
+                  </button>
+                </div>
+              </button>
+
+              <div className="font-inter text-[17px] text-shadow ">
+                Change the way text will be generated.
+                <div className="flex gap-5 text-white">
+                  <button
+                    onClick={() => {
+                      setCustomTextGeneration("simple");
+                    }}
+                    className={`w-28 rounded-lg  box-shadow   ${customTextGeneration === "simple" ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    simple
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCustomTextGeneration("shuffle");
+                    }}
+                    className={`w-28 rounded-lg  box-shadow  ${customTextGeneration === "shuffle" ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    shuffle
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setCustomTextGeneration("repeat");
+                    }}
+                    className={`w-28 rounded-lg  box-shadow  ${customTextGeneration === "repeat" ? "gradient-border" : "border-2 border-[#700093]"}`}
+                  >
+                    repeat
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setStoryMode(!storyMode);
+                }}
+                className={`cursor-pointer w-full h-14 text-xl flex-shrink-0 flex-grow-0 flex items-center justify-center rounded-xl box-shadow text-white font-bold ${storyMode ? "gradient-border" : "border-2 border-[#700093]"}  `}
+              >
+                Story Mode
+              </button>
+            </div>
+          </div>
         </div>
 
         <textarea
