@@ -17,6 +17,11 @@ interface TestingTextProps {
   onSendData: (data: boolean) => void;
   onSendCustomSettings: (data: boolean) => void;
   onSendStartTimer: (data: boolean) => void;
+  onSendDataForAnalysis: (data: {
+    correctAndWrongWords: boolean[];
+    ConstantTime: number | undefined;
+    CorrectIndices: (number | boolean)[][];
+  }) => void;
   difficultyLevelString: string;
 }
 
@@ -85,12 +90,27 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const [customTextGeneration, setCustomTextGeneration] =
     useState<string>("simple");
   const [storyMode, setStoryMode] = useState(false);
+  const wrongWordsIndicesRef = useRef<boolean[]>([]);
+  const constantTimeRef = useRef<number>();
+  const correctIndicesRef = useRef<(number | boolean)[][]>([]);
 
   useEffect(() => {
     setRefernceToFirstLetter(
       (linesRef.current?.children[0].children[0] as HTMLElement).offsetTop,
     );
   }, []);
+
+  useEffect(() => {
+    wrongWordsIndicesRef.current = wrongWordsIndices;
+  }, [wrongWordsIndices]);
+
+  useEffect(() => {
+    constantTimeRef.current = constantTime;
+  }, [constantTime]);
+
+  useEffect(() => {
+    correctIndicesRef.current = correctIndices;
+  }, [correctIndices]);
 
   // functiopn onChange
   const Each_Text_Input = (text: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -359,13 +379,23 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
     if (startTimer) {
       if (props.timer === 0) props.setTimer(30);
       setConstantTime(props.timer);
-      // sendDataConstantTime(constantTime);
 
       intervalId = setInterval(() => {
         props.setTimer((previousValue) => {
           if (previousValue <= 1) {
             clearInterval(intervalId);
+            const wrongWords = wrongWordsIndicesRef.current; // Always latest value
+            const constantTime = constantTimeRef.current;
+            const CorrectIndices = correctIndicesRef.current;
+            console.log("Cc", correctIndices);
+            props.onSendDataForAnalysis({
+              correctAndWrongWords: wrongWords,
+              ConstantTime: constantTime,
+              CorrectIndices: CorrectIndices,
+            });
+
             sendDataStartTimer(true);
+
             return 0;
           }
 
@@ -390,6 +420,10 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const sendDataStartTimer = (value: boolean) => {
     props.onSendStartTimer(value);
   };
+  // const sendDataForAnalysis = (correctAndWrongWords: boolean[]) => {
+  //   console.log("1", correctAndWrongWords);
+  //   props.onSendDataForAnalysis({ correctAndWrongWords: correctAndWrongWords });
+  // };
 
   useEffect(() => {
     setProgressAnimation((props.timer / constantTime) * 100);
@@ -669,7 +703,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
           className={`  w-full border-[#dfb415]  gap-8 h-full flex items-center justify-between  ${!startTimer ? "opacity-0 duration-300 hidden" : ""}`}
         >
           <div className="text-xl">✅ {correcWordsCalculation()} words</div>
-          <div className=" border-4 border-gray-500  w-1/2 h-10  relative flex items-center justify-start rounded-lg">
+          <div className="  border-gray-500  w-1/2 h-10  relative flex items-center justify-start rounded-lg">
             <div className="absolute w-16 h-16  rounded-full flex items-center justify-center text-shadow-heading font-bold left-1/2 transform -translate-x-1/2 bg-[#E2B714]">
               {props.timer}
             </div>
@@ -687,7 +721,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
       </div>
       <div
         id="text-container"
-        className="border-4  overflow-hidden font-semibold w-full text-2xl text-bold tracking-widest  text-gray-500 leading-[54px] h-80  relative font-lexend"
+        className="  overflow-hidden font-semibold w-full text-2xl text-bold tracking-widest  text-gray-500 leading-[54px] h-80  relative font-lexend"
         ref={linesRef}
       >
         <div

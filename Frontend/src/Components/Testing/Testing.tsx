@@ -22,6 +22,13 @@ const Testing = () => {
   const [childData, setChildData] = useState(false);
   const [customChildData, setCustomChildData] = useState(false);
   const [startTimer, setStartTimer] = useState(false);
+  const [correctAndWrongWords, setCorrectAndWrongWords] = useState<boolean[]>(
+    [],
+  );
+  const [constantTime, setConstantTime] = useState<number | undefined>(0);
+  const [correctIndices, setCorrectIndices] = useState<(number | boolean)[][]>(
+    [],
+  );
 
   const handleDataFromChild = (data: boolean) => {
     setChildData(data);
@@ -34,14 +41,28 @@ const Testing = () => {
     setStartTimer(data);
   };
 
+  const handleDataForAnalysis = (data: {
+    correctAndWrongWords: boolean[];
+    ConstantTime: number | undefined;
+    CorrectIndices: (number | boolean)[][];
+  }) => {
+    setCorrectAndWrongWords(data.correctAndWrongWords);
+    setConstantTime(data.ConstantTime);
+    setCorrectIndices(data.CorrectIndices);
+  };
+
   return (
     <React.Fragment>
       {startTimer ? (
-        <div className="w-screen h-auto bg-transparent  border-4">
-          <Analysis></Analysis>
+        <div className="w-screen h-auto bg-transparent  ">
+          <Analysis
+            correctAndWrongWords={correctAndWrongWords}
+            constantTime={constantTime}
+            correctIndices={correctIndices}
+          ></Analysis>
         </div>
       ) : (
-        <div className="w-screen h-auto bg-transparent  mt-40 border-4">
+        <div className="w-screen h-screen bg-transparent  mt-40 ">
           <div className="w-full h-auto  text-8xl font-lexend  text-[#C3C3C3] font-bold text-center text-shadow-heading">
             Start Practicing!
           </div>
@@ -439,6 +460,7 @@ const Testing = () => {
                 onSendData={handleDataFromChild}
                 onSendCustomSettings={handleDataFromChildCustom}
                 onSendStartTimer={handleDataFromChildStartTimer}
+                onSendDataForAnalysis={handleDataForAnalysis}
                 difficultyLevelString={difficultyLevelString}
               ></Testing_Text>
             </div>
