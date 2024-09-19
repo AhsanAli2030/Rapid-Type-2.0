@@ -22,6 +22,7 @@ interface TestingTextProps {
     correctAndWrongWords: boolean[];
     ConstantTime: number | undefined;
     CorrectIndices: (number | boolean)[][];
+    TimeDiffrences: number[];
   }) => void;
   difficultyLevelString: string;
 }
@@ -94,7 +95,9 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const wrongWordsIndicesRef = useRef<boolean[]>([]);
   const constantTimeRef = useRef<number>();
   const correctIndicesRef = useRef<(number | boolean)[][]>([]);
-
+  const wordStartTimeRef = useRef<number | null>(null); // to store the start time
+  const [timeDifference, setTimeDifference] = useState<number[]>([]); // to store the time difference
+  const timeDiffrenceRef = useRef<number[]>([]);
   useEffect(() => {
     setRefernceToFirstLetter(
       (linesRef.current?.children[0].children[0] as HTMLElement).offsetTop,
@@ -112,6 +115,10 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   useEffect(() => {
     correctIndicesRef.current = correctIndices;
   }, [correctIndices]);
+
+  useEffect(() => {
+    timeDiffrenceRef.current = timeDifference;
+  }, [timeDifference]);
 
   // functiopn onChange
   const Each_Text_Input = (text: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -388,11 +395,12 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
             const wrongWords = wrongWordsIndicesRef.current; // Always latest value
             const constantTime = constantTimeRef.current;
             const CorrectIndices = correctIndicesRef.current;
-            console.log("Cc", correctIndices);
+            const TimeDiffrences = timeDiffrenceRef.current;
             props.onSendDataForAnalysis({
               correctAndWrongWords: wrongWords,
               ConstantTime: constantTime,
               CorrectIndices: CorrectIndices,
+              TimeDiffrences: TimeDiffrences,
             });
 
             sendDataStartTimer(true);
@@ -584,6 +592,25 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
         break;
     }
   };
+
+  useEffect(() => {
+    if (startTimer) {
+      const currentTime = new Date().getTime();
+
+      if (wordStartTimeRef.current === null) {
+        // First time when the timer starts
+        wordStartTimeRef.current = currentTime;
+      } else {
+        // Calculate time difference between current time and word start time
+        const timeDiffInMs = currentTime - wordStartTimeRef.current;
+        const timeDiffInSeconds = timeDiffInMs / 1000; // convert ms to seconds
+        setTimeDifference((prevValue) => [...prevValue, timeDiffInSeconds]);
+
+        // Reset wordStartTime for the next word
+        wordStartTimeRef.current = currentTime;
+      }
+    }
+  }, [startTimer, wordIndexState]);
 
   return (
     <React.Fragment>

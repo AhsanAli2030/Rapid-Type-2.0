@@ -9,6 +9,7 @@ interface AnalysisPropsInterface {
   correctAndWrongWords: boolean[];
   constantTime: number | undefined;
   correctIndices: (number | boolean)[][];
+  timeDiffrences: number[];
 }
 
 const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
@@ -18,6 +19,9 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
   const [correctEntries, setCorrectEntries] = React.useState<boolean>(false);
   const [wrongEntries, setWrongEntries] = React.useState<boolean>(false);
   const [skippedEntries, setSkippedEntries] = React.useState<boolean>(false);
+  const [timingMetrices, setTimingMetrices] = React.useState<boolean>(false);
+  const [correctionBehaviour, setCorrectionBehaviour] =
+    React.useState<boolean>(false);
   const [dynamicPropertiesAddition, setDynamicPropertiesAddition] =
     React.useState<
       {
@@ -87,8 +91,6 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
 
   React.useEffect(() => {
     setDynamicPropertiesAddition((prevState) => {
-      let counter = 0,
-        charsCounter = 0;
       // Check if 'Correct Entries' should be added or removed
       const exists = prevState.some(
         (instance) => instance.name === "Correct Entries",
@@ -100,8 +102,13 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
       const existsSE = prevState.some(
         (instance) => instance.name === "Skipped Entries",
       );
+      const existsTM = prevState.some(
+        (instance) => instance.name === "Timing Metrices",
+      );
 
       if (correctEntries && !exists) {
+        let counter = 0,
+          charsCounter = 0;
         for (let i = 0; i < props.correctAndWrongWords.length; i++) {
           if (props.correctAndWrongWords[i] === false) counter++;
         }
@@ -134,15 +141,28 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
       //
       if (wrongEntries && !existsWE) {
         // Add 'Correct Entries' if it doesn't already exist
+        let counter = 0,
+          charsCounter = 0,
+          skippedCounter = 0;
+        for (let i = 0; i < props.correctAndWrongWords.length; i++) {
+          if (props.correctAndWrongWords[i] === true) counter++;
+        }
+        for (let i = 0; i < props.correctIndices.length; i++) {
+          if (props.correctIndices[i].includes(2)) skippedCounter++;
+          for (let j = 0; j < props.correctIndices[i].length; j++) {
+            if (props.correctIndices[i][j] === false) charsCounter++;
+            // if (props.correctIndices[i][j] === 2) skippedCounter++;
+          }
+        }
         return [
           ...prevState,
           {
             name: "Wrong Entries",
             svg: Speed,
             details: [
-              { name: "ww", state: true, symbol: "words" },
-              { name: "cc", state: false, symbol: "chars" },
-              { name: "ss", state: false, symbol: "spaces" },
+              { name: `${counter}`, state: true, symbol: "words" },
+              { name: `${charsCounter}`, state: false, symbol: "chars" },
+              { name: `${skippedCounter}`, state: false, symbol: "spaces" },
             ],
           },
         ];
@@ -154,15 +174,23 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
       }
 
       if (skippedEntries && !existsSE) {
+        let skippedChars = 0,
+          skippedWords = 0;
         // Add 'Correct Entries' if it doesn't already exist
+        for (let i = 0; i < props.correctIndices.length; i++) {
+          if (props.correctIndices[i].includes(2)) skippedWords++;
+          for (let j = 0; j < props.correctIndices[i].length; j++) {
+            if (props.correctIndices[i][j] === 2) skippedChars++;
+          }
+        }
         return [
           ...prevState,
           {
             name: "Skipped Entries",
             svg: Speed,
             details: [
-              { name: "www", state: true, symbol: "words" },
-              { name: "ccc", state: false, symbol: "chars" },
+              { name: `${skippedWords}`, state: true, symbol: "words" },
+              { name: `${skippedChars}`, state: false, symbol: "chars" },
             ],
           },
         ];
@@ -173,9 +201,57 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
         );
       }
 
+      if (timingMetrices && !existsTM) {
+        // let skippedChars = 0,
+        //   skippedWords = 0;
+        // // Add 'Correct Entries' if it doesn't already exist
+        // for (let i = 0; i < props.correctIndices.length; i++) {
+        //   if (props.correctIndices[i].includes(2)) skippedWords++;
+        //   for (let j = 0; j < props.correctIndices[i].length; j++) {
+        //     if (props.correctIndices[i][j] === 2) skippedChars++;
+        //   }
+        // }
+        const averageTimePerWord = props.timeDiffrences.reduce(
+          (accumulator, value) => {
+            return accumulator + value;
+          },
+          0,
+        );
+
+        return [
+          ...prevState,
+          {
+            name: "Timing Metrices",
+            svg: Speed,
+            details: [
+              {
+                name: `${parseFloat((averageTimePerWord / props.timeDiffrences.length).toFixed(1))}`,
+                state: true,
+                symbol: "sec per word",
+              },
+              {
+                name: `${Math.max(...props.timeDiffrences)}`,
+                state: false,
+                symbol: "highest sec",
+              },
+              {
+                name: `${Math.min(...props.timeDiffrences)}`,
+                state: false,
+                symbol: "lowest sec",
+              },
+            ],
+          },
+        ];
+      } else if (!timingMetrices && existsTM) {
+        // Remove 'Correct Entries' if it exists
+        return prevState.filter(
+          (instance) => instance.name !== "Timing Metrices",
+        );
+      }
+
       return prevState; // Return unchanged if no action is needed
     });
-  }, [correctEntries, wrongEntries, skippedEntries]);
+  }, [correctEntries, wrongEntries, skippedEntries, timingMetrices]);
 
   return (
     <React.Fragment>
@@ -317,6 +393,96 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
             className="text-white font-lexend border-2 cursor-pointer w-52 h-16 flex items-center justify-center  text-2xl  rounded-lg border-[#ECA5F8]  overflow-hidden "
           >
             Skipped Entries
+          </div>
+
+          <div
+            id="timing-metrices"
+            onMouseEnter={() => {
+              gsap.to("#timing-metrices", {
+                scale: 1.2,
+                duration: 0.7, // Adjusted duration for smoother transition
+                fontWeight: "bold", // Makes the text bold
+                backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
+              });
+            }}
+            onMouseLeave={() => {
+              {
+                !timingMetrices
+                  ? gsap.to("#timing-metrices", {
+                      scale: 1,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "normal", // Makes the text bold
+                      backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                    })
+                  : "";
+              }
+            }}
+            onClick={() => {
+              setTimingMetrices(!timingMetrices);
+              {
+                timingMetrices
+                  ? gsap.to("#timing-metrices", {
+                      scale: 1,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "normal", // Makes the text bold
+                      backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                    })
+                  : gsap.to("#timing-metrices", {
+                      scale: 1.2,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "bold", // Makes the text bold
+                      backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
+                    });
+              }
+            }}
+            className="text-white font-lexend border-2 cursor-pointer w-52 h-16 flex items-center justify-center  text-2xl  rounded-lg border-[#ECA5F8]  overflow-hidden "
+          >
+            Timing Metrices
+          </div>
+
+          <div
+            id="correction-behaviour"
+            onMouseEnter={() => {
+              gsap.to("#correction-behaviour", {
+                scale: 1.2,
+                duration: 0.7, // Adjusted duration for smoother transition
+                fontWeight: "bold", // Makes the text bold
+                backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
+              });
+            }}
+            onMouseLeave={() => {
+              {
+                !correctionBehaviour
+                  ? gsap.to("#correction-behaviour", {
+                      scale: 1,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "normal", // Makes the text bold
+                      backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                    })
+                  : "";
+              }
+            }}
+            onClick={() => {
+              setCorrectionBehaviour(!correctionBehaviour);
+              {
+                correctionBehaviour
+                  ? gsap.to("#correction-behaviour", {
+                      scale: 1,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "normal", // Makes the text bold
+                      backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                    })
+                  : gsap.to("#correction-behaviour", {
+                      scale: 1.2,
+                      duration: 0.7, // Adjusted duration for smoother transition
+                      fontWeight: "bold", // Makes the text bold
+                      backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
+                    });
+              }
+            }}
+            className="text-white font-lexend border-2 cursor-pointer w-64 h-16 flex items-center justify-center  text-2xl  rounded-lg border-[#ECA5F8]  overflow-hidden "
+          >
+            Correction Behavior
           </div>
         </div>
       </div>{" "}
@@ -526,7 +692,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 onMouseEnter={() => {
                   gsap.to(`.instance-${index}`, {
                     opacity: 1,
-                    width: 120,
+                    width: 140,
                     height: 40,
                     stagger: 0.2,
                     duration: 0.2, // Adjusted duration for smoother transition
@@ -541,7 +707,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                     duration: 0.5, // Adjusted duration for smoother transition
                   });
                 }}
-                className="relative cursor-default"
+                className="relative cursor-default "
               >
                 <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
                   {instances.name} <img src={instances.svg} alt="" />
@@ -608,7 +774,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                           );
                         }}
                         style={{
-                          top: `${88 + absoluteIndex * 44}px`, // Adjusted calculation for top position
+                          top: `${88 + absoluteIndex * 43}px`, // Adjusted calculation for top position
                         }}
                         className={`absolute-${absoluteIndex} instance-${index} cursor-pointer absolute flex items-center justify-center text-white text-xl border-2 rounded-lg border-[#ECA5F8] w-0 h-0 overflow-hidden opacity-0 left-[50%] transform translate-x-[-50%]`}
                       >

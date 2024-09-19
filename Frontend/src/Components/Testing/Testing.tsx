@@ -29,7 +29,7 @@ const Testing = () => {
   const [correctIndices, setCorrectIndices] = useState<(number | boolean)[][]>(
     [],
   );
-
+  const [timeDiffrences, setTimeDiffrences] = useState<number[]>([]);
   const handleDataFromChild = (data: boolean) => {
     setChildData(data);
   };
@@ -45,10 +45,12 @@ const Testing = () => {
     correctAndWrongWords: boolean[];
     ConstantTime: number | undefined;
     CorrectIndices: (number | boolean)[][];
+    TimeDiffrences: number[];
   }) => {
     setCorrectAndWrongWords(data.correctAndWrongWords);
     setConstantTime(data.ConstantTime);
     setCorrectIndices(data.CorrectIndices);
+    setTimeDiffrences(data.TimeDiffrences);
   };
 
   return (
@@ -59,6 +61,7 @@ const Testing = () => {
             correctAndWrongWords={correctAndWrongWords}
             constantTime={constantTime}
             correctIndices={correctIndices}
+            timeDiffrences={timeDiffrences}
           ></Analysis>
         </div>
       ) : (
