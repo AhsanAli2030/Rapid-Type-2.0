@@ -26,6 +26,7 @@
 8.Skipped Entries:
     Skipped Words: Number of words the user didn't attempt to type.
     Skipped Characters: Number of characters skipped during typing.
+
 9.Timing Metrics:
     Time Spent Per Word: Average time taken to type a word.
     Peak Typing Speed: Highest WPM recorded during the test.

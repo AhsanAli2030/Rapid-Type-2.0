@@ -5,6 +5,7 @@ import "../Navbar/Navbar.css";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import axios from "axios";
+import backgroundPic from "../../assets/static_files/background_pic.png";
 gsap.registerPlugin(useGSAP);
 
 interface TestingTextProps {
@@ -395,6 +396,12 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
             });
 
             sendDataStartTimer(true);
+            gsap.to("#body", {
+              backgroundColor: "transparent", // Change to black
+              backgroundImage: backgroundPic, // Remove SVG
+              duration: 1.5, // Duration of the animation
+              ease: "slow(0.7,0.7,false)",
+            });
 
             return 0;
           }
