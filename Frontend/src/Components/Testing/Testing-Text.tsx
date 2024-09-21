@@ -23,6 +23,8 @@ interface TestingTextProps {
     ConstantTime: number | undefined;
     CorrectIndices: (number | boolean)[][];
     TimeDiffrences: number[];
+    BackSpaceCounter: number | undefined;
+    WordsCorrectedCounter: number[] | undefined;
   }) => void;
   difficultyLevelString: string;
 }
@@ -98,6 +100,12 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const wordStartTimeRef = useRef<number | null>(null); // to store the start time
   const [timeDifference, setTimeDifference] = useState<number[]>([]); // to store the time difference
   const timeDiffrenceRef = useRef<number[]>([]);
+  const [backSpaceCounter, setBackspaceCounter] = useState<number>(0);
+  const [wordsCorrectedCounter, setWordsCorrectedCounter] = useState<number[]>(
+    [],
+  );
+  const wordsCorrectedCounterRef = useRef<number[]>();
+  const backspaceCounterRef = useRef<number>();
   useEffect(() => {
     setRefernceToFirstLetter(
       (linesRef.current?.children[0].children[0] as HTMLElement).offsetTop,
@@ -114,11 +122,53 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
 
   useEffect(() => {
     correctIndicesRef.current = correctIndices;
+
+    // Ensure correctIndices and correctIndices[wordIndexState] are defined
+    // let check = false;
+    // for (let i = 0; i < correctIndices[wordIndexState].length; i++) {
+    //   if (correctIndices[wordIndexState][i] === 2) {
+    //     check = true;
+    //   }
+    // }
+
+    if (
+      correctIndices &&
+      correctIndices[wordIndexState] &&
+      !wordsCorrectedCounter.includes(wordIndexState) &&
+      correctIndices[wordIndexState].includes(false)
+    ) {
+      setWordsCorrectedCounter((previousArray) => [
+        ...previousArray,
+        wordIndexState,
+      ]);
+    }
   }, [correctIndices]);
 
   useEffect(() => {
     timeDiffrenceRef.current = timeDifference;
   }, [timeDifference]);
+
+  useEffect(() => {
+    backspaceCounterRef.current = backSpaceCounter;
+  }, [backSpaceCounter]);
+
+  useEffect(() => {
+    wordsCorrectedCounterRef.current = wordsCorrectedCounter;
+  }, [wordsCorrectedCounter]);
+
+  useEffect(() => {
+    if (correctIndices && correctIndices[wordIndexState - 1]) {
+      if (
+        !wordsCorrectedCounter.includes(wordIndexState - 1) &&
+        correctIndices[wordIndexState - 1].includes(2)
+      ) {
+        setWordsCorrectedCounter((previousArray) => [
+          ...previousArray,
+          wordIndexState - 1,
+        ]);
+      }
+    }
+  }, [wordIndexState]);
 
   // functiopn onChange
   const Each_Text_Input = (text: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -188,6 +238,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
             : innerBooleans,
         ),
       );
+
       setWrongIndices((previousWrongIndices) =>
         previousWrongIndices.map((innerBooleans, innerIndex) =>
           innerIndex === wordIndexState
@@ -306,6 +357,7 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   const Key_Down: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (event.key === "Backspace") {
       if (wordIndexState === 0 && charIndexState === 0) return;
+      setBackspaceCounter(backSpaceCounter + 1);
       if (charIndexState - 1 === 0) {
         setWrongWordsIndices((previousBooleans) =>
           previousBooleans.map((booleans, index) =>
@@ -396,11 +448,17 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
             const constantTime = constantTimeRef.current;
             const CorrectIndices = correctIndicesRef.current;
             const TimeDiffrences = timeDiffrenceRef.current;
+            const BackSpaceCounter = backspaceCounterRef.current;
+            const WordsCorrectedCounter = wordsCorrectedCounterRef.current;
+            console.log("WordsCorrectedCounter", WordsCorrectedCounter);
+
             props.onSendDataForAnalysis({
               correctAndWrongWords: wrongWords,
               ConstantTime: constantTime,
               CorrectIndices: CorrectIndices,
               TimeDiffrences: TimeDiffrences,
+              BackSpaceCounter: BackSpaceCounter,
+              WordsCorrectedCounter: WordsCorrectedCounter,
             });
 
             sendDataStartTimer(true);

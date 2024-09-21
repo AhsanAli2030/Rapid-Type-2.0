@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import Speed from "../../assets/static_files/material-symbols_speed-outline.svg";
 import Time from "../../assets/static_files/Group.svg";
 import Accuracy from "../../assets/static_files/mdi_bullseye.svg";
 import Consistency from "../../assets/static_files/tabler_scale.svg";
 import { gsap } from "gsap";
-
+import Analysis_Graphs from "./Analysis-Graphs";
+import Background from "three/src/renderers/common/Background.js";
 interface AnalysisPropsInterface {
   correctAndWrongWords: boolean[];
   constantTime: number | undefined;
   correctIndices: (number | boolean)[][];
   timeDiffrences: number[];
+  backSpaceCounter: number;
+  wordsCorrectedCounterSend: number[];
 }
 
 const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
@@ -20,6 +23,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
   const [wrongEntries, setWrongEntries] = React.useState<boolean>(false);
   const [skippedEntries, setSkippedEntries] = React.useState<boolean>(false);
   const [timingMetrices, setTimingMetrices] = React.useState<boolean>(false);
+  const [graphSelection, setGraphSelection] = useState("speed");
   const [correctionBehaviour, setCorrectionBehaviour] =
     React.useState<boolean>(false);
   const [dynamicPropertiesAddition, setDynamicPropertiesAddition] =
@@ -104,6 +108,9 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
       );
       const existsTM = prevState.some(
         (instance) => instance.name === "Timing Metrices",
+      );
+      const existsCB = prevState.some(
+        (instance) => instance.name === "Correction Behavior",
       );
 
       if (correctEntries && !exists) {
@@ -249,9 +256,64 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
         );
       }
 
+      if (correctionBehaviour && !existsCB) {
+        // let counter = 0,
+        //   charsCounter = 0;
+        // for (let i = 0; i < props.correctAndWrongWords.length; i++) {
+        //   if (props.correctAndWrongWords[i] === false) counter++;
+        // }
+        // for (let i = 0; i < props.correctIndices.length; i++) {
+        //   for (let j = 0; j < props.correctIndices[i].length; j++) {
+        //     if (props.correctIndices[i][j] === true) charsCounter++;
+        //   }
+        // }
+
+        // Add 'Correct Entries' if it doesn't already exist
+
+        return [
+          ...prevState,
+          {
+            name: "Correction Behavior",
+            svg: Speed,
+            details: [
+              {
+                name: `${props.backSpaceCounter}`,
+                state: true,
+                symbol: "back-spaces",
+              },
+              {
+                name: ` ${(props.backSpaceCounter / props.constantTime) * 60}`,
+                state: false,
+                symbol: "corrections per min",
+              },
+              {
+                name: `${
+                  props.wordsCorrectedCounterSend.length -
+                  props.correctAndWrongWords.filter((value) => value === true)
+                    .length
+                }`,
+                state: false,
+                symbol: "words corrected",
+              },
+            ],
+          },
+        ];
+      } else if (!correctionBehaviour && existsCB) {
+        // Remove 'Correct Entries' if it exists
+        return prevState.filter(
+          (instance) => instance.name !== "Correction Behavior",
+        );
+      }
+
       return prevState; // Return unchanged if no action is needed
     });
-  }, [correctEntries, wrongEntries, skippedEntries, timingMetrices]);
+  }, [
+    correctEntries,
+    wrongEntries,
+    skippedEntries,
+    timingMetrices,
+    correctionBehaviour,
+  ]);
 
   return (
     <React.Fragment>
@@ -486,15 +548,15 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           </div>
         </div>
       </div>{" "}
-      <div className="w-full   h-auto flex justify-center mt-16 font-lexend">
-        <div className="w-[80%] h-auto  flex items-center justify-center flex-wrap  gap-x-16 gap-y-4">
+      <div className="w-full   h-auto flex justify-center mt-16 font-lexend ">
+        <div className="w-[80%] h-auto  flex items-center justify-center flex-wrap  gap-x-16 gap-y-8 ">
           <div
             onMouseEnter={() => {
               gsap.to("#speed", {
                 opacity: 1,
                 width: 56,
                 height: 40,
-
+                backgroundColor: "#ECA5F8",
                 duration: 0.2, // Adjusted duration for smoother transition
               });
             }}
@@ -507,7 +569,10 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 duration: 0.5, // Adjusted duration for smoother transition
               });
             }}
-            className="relative cursor-default"
+            onClick={() => {
+              setGraphSelection("speed");
+            }}
+            className={`relative cursor-pointer ${graphSelection === "speed" ? "border-2 rounded-lg border-[#ECA5F8] p-3" : ""}  `}
           >
             <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
               Speed <img src={Speed} alt="" />
@@ -534,7 +599,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                   scale: 1,
                   duration: 0.7, // Adjusted duration for smoother transition
                   fontWeight: "normal", // Makes the text bold
-                  backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                  backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
                 });
               }}
               onClick={() => {
@@ -558,7 +623,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 opacity: 1,
                 width: 120,
                 height: 40,
-
+                backgroundColor: "#ECA5F8",
                 duration: 0.2, // Adjusted duration for smoother transition
               });
             }}
@@ -571,7 +636,10 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 duration: 0.5, // Adjusted duration for smoother transition
               });
             }}
-            className="relative cursor-default"
+            onClick={() => {
+              setGraphSelection("accuracy");
+            }}
+            className={`relative cursor-pointer ${graphSelection === "accuracy" ? "border-2 rounded-lg border-[#ECA5F8] p-3" : ""}  `}
           >
             <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
               Accuracy <img src={Accuracy} alt="" />
@@ -596,7 +664,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                   scale: 1,
                   duration: 0.7, // Adjusted duration for smoother transition
                   fontWeight: "normal", // Makes the text bold
-                  backgroundColor: "transparent", // Changes the background color to red (or any color of your choice)
+                  backgroundColor: "#ECA5F8", // Changes the background color to red (or any color of your choice)
                 });
               }}
               onClick={() => {
@@ -628,7 +696,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 opacity: 1,
                 width: 120,
                 height: 40,
-
+                backgroundColor: "#ECA5F8",
                 duration: 0.2, // Adjusted duration for smoother transition
               });
             }}
@@ -641,7 +709,10 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                 duration: 0.5, // Adjusted duration for smoother transition
               });
             }}
-            className="relative cursor-default"
+            onClick={() => {
+              setGraphSelection("typing");
+            }}
+            className={`relative cursor-pointer ${graphSelection === "typing" ? "border-2 rounded-lg border-[#ECA5F8] p-3" : ""}  `}
           >
             <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
               Typing <img src={Consistency} alt="" />
@@ -689,12 +760,14 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           {dynamicPropertiesAddition.map((instances, index) => {
             return (
               <div
+                key={index}
                 onMouseEnter={() => {
                   gsap.to(`.instance-${index}`, {
                     opacity: 1,
                     width: 140,
                     height: 40,
                     stagger: 0.2,
+                    backgroundColor: "#ECA5F8",
                     duration: 0.2, // Adjusted duration for smoother transition
                   });
                 }}
@@ -704,6 +777,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                     width: 0,
                     height: 0,
                     stagger: 0.2,
+                    backgroundColor: "#ECA5F8",
                     duration: 0.5, // Adjusted duration for smoother transition
                   });
                 }}
@@ -746,7 +820,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                             scale: 1,
                             duration: 0.7,
                             fontWeight: "normal",
-                            backgroundColor: "transparent",
+                            backgroundColor: "#ECA5F8",
                           });
                         }}
                         onClick={(event: React.MouseEvent<HTMLDivElement>) => {
@@ -776,7 +850,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                         style={{
                           top: `${88 + absoluteIndex * 43}px`, // Adjusted calculation for top position
                         }}
-                        className={`absolute-${absoluteIndex} instance-${index} cursor-pointer absolute flex items-center justify-center text-white text-xl border-2 rounded-lg border-[#ECA5F8] w-0 h-0 overflow-hidden opacity-0 left-[50%] transform translate-x-[-50%]`}
+                        className={`absolute-${absoluteIndex} text-center instance-${index} cursor-pointer absolute flex items-center justify-center text-white ${!correctionBehaviour ? "text-xl" : "text-md"}  border-2 rounded-lg border-[#ECA5F8] w-0 h-0 overflow-hidden opacity-0 left-[50%] transform translate-x-[-50%]`}
                       >
                         {detailOfInstance.symbol}
                       </div>
@@ -787,6 +861,9 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           })}
         </div>
       </div>{" "}
+      <div className="w-full">
+        <Analysis_Graphs></Analysis_Graphs>
+      </div>
     </React.Fragment>
   );
 };
