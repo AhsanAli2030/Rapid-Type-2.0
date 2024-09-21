@@ -25,6 +25,8 @@ interface TestingTextProps {
     TimeDiffrences: number[];
     BackSpaceCounter: number | undefined;
     WordsCorrectedCounter: number[] | undefined;
+    WordIndexStateArray: number[];
+    AllWords: string[];
   }) => void;
   difficultyLevelString: string;
 }
@@ -40,11 +42,13 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
       return index < arr.length - 1 ? word + " " : word;
     }),
   );
+  const wordsSendRef = useRef<string[]>([]);
   const [wordsAndCharacters, setWordsAndCharacters] = useState<string[][]>(
     words.map((word) => word.split("")),
   );
 
   const [wordIndexState, setWordIndexState] = useState<number>(0);
+  const wordIndexStateRef = useRef<number>(0);
   const [charIndexState, setCharIndexState] = useState<number>(0);
 
   const [correctIndices, setCorrectIndices] = useState<(number | boolean)[][]>(
@@ -106,6 +110,8 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   );
   const wordsCorrectedCounterRef = useRef<number[]>();
   const backspaceCounterRef = useRef<number>();
+
+  const [wordCounterWithTime, setWordCounterWithTime] = useState<number[]>([]);
   useEffect(() => {
     setRefernceToFirstLetter(
       (linesRef.current?.children[0].children[0] as HTMLElement).offsetTop,
@@ -115,10 +121,17 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
   useEffect(() => {
     wrongWordsIndicesRef.current = wrongWordsIndices;
   }, [wrongWordsIndices]);
+  useEffect(() => {
+    wordIndexStateRef.current = wordIndexState;
+  }, [wordIndexState]);
 
   useEffect(() => {
     constantTimeRef.current = constantTime;
   }, [constantTime]);
+
+  useEffect(() => {
+    wordsSendRef.current = words;
+  }, [words]);
 
   useEffect(() => {
     correctIndicesRef.current = correctIndices;
@@ -435,13 +448,17 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
 
   useEffect(() => {
     let intervalId: number;
-
+    const wordIndexStateArray: number[] = [];
     if (startTimer) {
       if (props.timer === 0) props.setTimer(30);
       setConstantTime(props.timer);
 
       intervalId = setInterval(() => {
         props.setTimer((previousValue) => {
+          if ((previousValue - 1) % 3 === 0) {
+            wordIndexStateArray.push(wordIndexStateRef.current);
+          }
+
           if (previousValue <= 1) {
             clearInterval(intervalId);
             const wrongWords = wrongWordsIndicesRef.current; // Always latest value
@@ -450,8 +467,8 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
             const TimeDiffrences = timeDiffrenceRef.current;
             const BackSpaceCounter = backspaceCounterRef.current;
             const WordsCorrectedCounter = wordsCorrectedCounterRef.current;
-            console.log("WordsCorrectedCounter", WordsCorrectedCounter);
-
+            const AllWords = wordsSendRef.current;
+            setWordCounterWithTime(wordIndexStateArray);
             props.onSendDataForAnalysis({
               correctAndWrongWords: wrongWords,
               ConstantTime: constantTime,
@@ -459,6 +476,8 @@ const Testing_Text: React.FC<TestingTextProps> = (props) => {
               TimeDiffrences: TimeDiffrences,
               BackSpaceCounter: BackSpaceCounter,
               WordsCorrectedCounter: WordsCorrectedCounter,
+              WordIndexStateArray: wordIndexStateArray,
+              AllWords: AllWords,
             });
 
             sendDataStartTimer(true);

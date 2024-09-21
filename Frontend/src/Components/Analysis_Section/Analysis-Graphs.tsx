@@ -3,12 +3,31 @@ import barGraph from "../../assets/static_files/streamline_graph-bar-increase-so
 import reload from "../../assets/static_files/ion_reload.svg";
 import github from "../../assets/static_files/mingcute_github-line.svg";
 import { gsap } from "gsap";
-const Analysis_Graphs = () => {
+// import AccuracyBarChart from "./AccuracyBarChart";
+// import TypingBarChart from "./TypingBarChart";
+// import CorrectBarChart from "./CorrectBarChart";
+// import WrongBarChart from "./WrongBarChart";
+// import SkippedBarChart from "./SkippedBarChart";
+// import TimingMetricesLineChart from "./TimingMetricesLineChart";
+// import CorrectionBehaviourBarChart from "./CorrectionBehaviourBarChart";
+import SpeedLineChart from "./SpeedLineChart";
+interface AnalysisGraphsPropsInterface {
+  accuracyCalculated: number[];
+  typingCalculated: number[];
+  correctEntriesCalculted: number[];
+  wrongEntriesCalculted: number[];
+  skippedEntriesCalculted: number[];
+  timediffrence: number[];
+  correctionBehaviourCalculated: number[];
+  WordIndexStateArray: number[];
+  allWords: string[];
+}
+const Analysis_Graphs: React.FC<AnalysisGraphsPropsInterface> = (props) => {
   return (
     <React.Fragment>
-      <div className="w-full flex gap-[1%] h-screen">
-        <div className="w-[25%] h-auto border-2 flex items-center justify-center">
-          <div className="w-full h-1/2 border-2 flex flex-col gap-10 items-center justify-center">
+      <div className="w-full flex gap-[1%] h-auto]">
+        <div className="w-[20%] h-auto  flex items-center justify-center">
+          <div className="w-full h-1/2  flex flex-col gap-10 items-center justify-center">
             <button
               id="bar-graph"
               onMouseEnter={() => {
@@ -94,7 +113,13 @@ const Analysis_Graphs = () => {
             </button>
           </div>
         </div>
-        <div className="w-[74%] border-4"></div>
+        <div className="w-[65%] ">
+          <SpeedLineChart
+            timediffrence={props.timediffrence}
+            WordIndexStateArray={props.WordIndexStateArray}
+            allWords={props.allWords}
+          />
+        </div>
       </div>
     </React.Fragment>
   );

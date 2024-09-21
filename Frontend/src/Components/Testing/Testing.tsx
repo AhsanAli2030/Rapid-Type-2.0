@@ -34,6 +34,8 @@ const Testing = () => {
   const [wordsCorrectedCounterSend, setWordsCorrectedCounterSend] = useState<
     number[] | undefined
   >([]);
+  const [WordIndexStateArray, setWordIndexStateArray] = useState<number[]>([]);
+  const [allWords, setAllWords] = useState<string[]>([]);
 
   const handleDataFromChild = (data: boolean) => {
     setChildData(data);
@@ -53,6 +55,8 @@ const Testing = () => {
     TimeDiffrences: number[];
     BackSpaceCounter: number;
     WordsCorrectedCounter: number[];
+    WordIndexStateArray: number[];
+    AllWords: string[];
   }) => {
     setCorrectAndWrongWords(data.correctAndWrongWords);
     setConstantTime(data.ConstantTime);
@@ -60,6 +64,8 @@ const Testing = () => {
     setTimeDiffrences(data.TimeDiffrences);
     setBackSpaceCounter(data.BackSpaceCounter);
     setWordsCorrectedCounterSend(data.WordsCorrectedCounter);
+    setWordIndexStateArray(data.WordIndexStateArray);
+    setAllWords(data.AllWords);
   };
 
   return (
@@ -73,6 +79,8 @@ const Testing = () => {
             timeDiffrences={timeDiffrences}
             backSpaceCounter={backSpaceCounter}
             wordsCorrectedCounterSend={wordsCorrectedCounterSend}
+            WordIndexStateArray={WordIndexStateArray}
+            allWords={allWords}
           ></Analysis>
         </div>
       ) : (

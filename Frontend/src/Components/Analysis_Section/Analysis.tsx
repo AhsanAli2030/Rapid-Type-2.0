@@ -3,9 +3,15 @@ import Speed from "../../assets/static_files/material-symbols_speed-outline.svg"
 import Time from "../../assets/static_files/Group.svg";
 import Accuracy from "../../assets/static_files/mdi_bullseye.svg";
 import Consistency from "../../assets/static_files/tabler_scale.svg";
+import Typing from "../../assets/static_files/Typing.svg";
+import CorrectEntries from "../../assets/static_files/Right.svg";
+import WrongEntries from "../../assets/static_files/Wrong.svg";
+import SkippedEntries from "../../assets/static_files/Skipped Entries.svg";
+import TimingMetrices from "../../assets/static_files/Timing.svg";
+import CorrectionBehaviour from "../../assets/static_files/Correction Behaviour.svg";
+
 import { gsap } from "gsap";
 import Analysis_Graphs from "./Analysis-Graphs";
-import Background from "three/src/renderers/common/Background.js";
 interface AnalysisPropsInterface {
   correctAndWrongWords: boolean[];
   constantTime: number | undefined;
@@ -13,19 +19,36 @@ interface AnalysisPropsInterface {
   timeDiffrences: number[];
   backSpaceCounter: number;
   wordsCorrectedCounterSend: number[];
+  WordIndexStateArray: number[];
+  allWords: string[];
 }
 
 const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
   const [speed, setSpeed] = React.useState<boolean>(false);
   const [accuracy, setAccuracy] = React.useState<boolean>(false);
+  const [accuracyCalculated, setAccuracyCalculated] = React.useState<number[]>(
+    [],
+  );
   const [typing, setTyping] = React.useState<boolean>(false);
+  const [typingCalculated, setTypingCalculated] = React.useState<number[]>([]);
   const [correctEntries, setCorrectEntries] = React.useState<boolean>(false);
+  const [correctEntriesCalculted, setCorrectEntriesCalculted] = React.useState<
+    number[]
+  >([]);
   const [wrongEntries, setWrongEntries] = React.useState<boolean>(false);
+  const [wrongEntriesCalculted, setWrongEntriesCalculted] = React.useState<
+    number[]
+  >([]);
   const [skippedEntries, setSkippedEntries] = React.useState<boolean>(false);
+  const [skippedEntriesCalculted, setSkippedEntriesCalculted] = React.useState<
+    number[]
+  >([]);
   const [timingMetrices, setTimingMetrices] = React.useState<boolean>(false);
   const [graphSelection, setGraphSelection] = useState("speed");
   const [correctionBehaviour, setCorrectionBehaviour] =
     React.useState<boolean>(false);
+  const [correctionBehaviourCalculated, setCorrectionBehaviouCalculated] =
+    React.useState<number[]>([]);
   const [dynamicPropertiesAddition, setDynamicPropertiesAddition] =
     React.useState<
       {
@@ -65,6 +88,12 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
       for (let i = 0; i < props.correctAndWrongWords.length; i++) {
         if (props.correctAndWrongWords[i] === false) counter++;
       }
+      // setAccuracyCalculated((prevData) => [
+      //   ...prevData,
+      //   parseFloat(
+      //     ((counter / props.correctAndWrongWords.length) * 100).toFixed(2),
+      //   ),
+      // ]);
       return parseFloat(
         ((counter / props.correctAndWrongWords.length) * 100).toFixed(2),
       );
@@ -77,6 +106,10 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
         }
         totalCharacters += props.correctIndices[i].length;
       }
+      // setAccuracyCalculated((prevData) => [
+      //   ...prevData,
+      //   parseFloat(((counter / totalCharacters) * 100).toFixed(2)),
+      // ]);
       return parseFloat(((counter / totalCharacters) * 100).toFixed(2));
     }
     return 0;
@@ -93,6 +126,112 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
     }
   };
 
+  React.useEffect(() => {
+    if (!accuracy) {
+      let wordCounter = 0,
+        charCounter = 0;
+      let totalWords = props.correctAndWrongWords.length;
+      let totalCharacters = 0;
+
+      // Calculate word accuracy (false means incorrect)
+      for (let i = 0; i < totalWords; i++) {
+        if (props.correctAndWrongWords[i] === false) wordCounter++;
+      }
+      let wordAccuracy = parseFloat(
+        ((wordCounter / totalWords) * 100).toFixed(2),
+      );
+
+      // Calculate character accuracy
+      for (let i = 0; i < props.correctIndices.length; i++) {
+        for (let j = 0; j < props.correctIndices[i].length; j++) {
+          if (props.correctIndices[i][j] === true) charCounter++;
+        }
+        totalCharacters += props.correctIndices[i].length;
+      }
+      let charAccuracy = parseFloat(
+        ((charCounter / totalCharacters) * 100).toFixed(2),
+      );
+
+      // Update accuracyCalculated once with both values
+      setAccuracyCalculated((prevData) => [
+        ...prevData,
+        wordAccuracy, // Word accuracy percentage
+        charAccuracy, // Character accuracy percentage
+      ]);
+    }
+    let totalCharacters = 0;
+    for (let i = 0; i < props.correctIndices.length; i++) {
+      totalCharacters += props.correctIndices[i].length;
+    }
+
+    setTypingCalculated((previosValue) => [
+      ...previosValue,
+      props.correctAndWrongWords.length,
+      totalCharacters,
+    ]);
+
+    let counter = 0,
+      charsCounter = 0;
+    for (let i = 0; i < props.correctAndWrongWords.length; i++) {
+      if (props.correctAndWrongWords[i] === false) counter++;
+    }
+    for (let i = 0; i < props.correctIndices.length; i++) {
+      for (let j = 0; j < props.correctIndices[i].length; j++) {
+        if (props.correctIndices[i][j] === true) charsCounter++;
+      }
+    }
+
+    setCorrectEntriesCalculted((previousValue) => [
+      ...previousValue,
+      counter,
+      charsCounter,
+      counter,
+    ]);
+
+    counter = charsCounter = 0;
+
+    let skippedCounter = 0;
+    for (let i = 0; i < props.correctAndWrongWords.length; i++) {
+      if (props.correctAndWrongWords[i] === true) counter++;
+    }
+    for (let i = 0; i < props.correctIndices.length; i++) {
+      if (props.correctIndices[i].includes(2)) skippedCounter++;
+      for (let j = 0; j < props.correctIndices[i].length; j++) {
+        if (props.correctIndices[i][j] === false) charsCounter++;
+        // if (props.correctIndices[i][j] === 2) skippedCounter++;
+      }
+    }
+    setWrongEntriesCalculted((previousValue) => [
+      ...previousValue,
+      counter,
+      charsCounter,
+      skippedCounter,
+    ]);
+
+    let skippedChars = 0,
+      skippedWords = 0;
+    // Add 'Correct Entries' if it doesn't already exist
+    for (let i = 0; i < props.correctIndices.length; i++) {
+      if (props.correctIndices[i].includes(2)) skippedWords++;
+      for (let j = 0; j < props.correctIndices[i].length; j++) {
+        if (props.correctIndices[i][j] === 2) skippedChars++;
+      }
+    }
+
+    setSkippedEntriesCalculted((prevValues) => [
+      ...prevValues,
+      skippedWords,
+      skippedChars,
+    ]);
+
+    setCorrectionBehaviouCalculated((previous) => [
+      ...previous,
+      props.backSpaceCounter,
+      (props.backSpaceCounter / props.constantTime) * 60,
+      props.wordsCorrectedCounterSend.length -
+        props.correctAndWrongWords.filter((value) => value === true).length,
+    ]);
+  }, []); // Add dependencies if they change dynamically
   React.useEffect(() => {
     setDynamicPropertiesAddition((prevState) => {
       // Check if 'Correct Entries' should be added or removed
@@ -130,7 +269,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           ...prevState,
           {
             name: "Correct Entries",
-            svg: Speed,
+            svg: CorrectEntries,
             details: [
               { name: `${counter}`, state: true, symbol: "words" },
               { name: `${charsCounter}`, state: false, symbol: "chars" },
@@ -165,7 +304,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           ...prevState,
           {
             name: "Wrong Entries",
-            svg: Speed,
+            svg: WrongEntries,
             details: [
               { name: `${counter}`, state: true, symbol: "words" },
               { name: `${charsCounter}`, state: false, symbol: "chars" },
@@ -194,7 +333,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           ...prevState,
           {
             name: "Skipped Entries",
-            svg: Speed,
+            svg: SkippedEntries,
             details: [
               { name: `${skippedWords}`, state: true, symbol: "words" },
               { name: `${skippedChars}`, state: false, symbol: "chars" },
@@ -229,7 +368,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           ...prevState,
           {
             name: "Timing Metrices",
-            svg: Speed,
+            svg: TimingMetrices,
             details: [
               {
                 name: `${parseFloat((averageTimePerWord / props.timeDiffrences.length).toFixed(1))}`,
@@ -274,7 +413,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           ...prevState,
           {
             name: "Correction Behavior",
-            svg: Speed,
+            svg: CorrectionBehaviour,
             details: [
               {
                 name: `${props.backSpaceCounter}`,
@@ -715,7 +854,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
             className={`relative cursor-pointer ${graphSelection === "typing" ? "border-2 rounded-lg border-[#ECA5F8] p-3" : ""}  `}
           >
             <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
-              Typing <img src={Consistency} alt="" />
+              Typing <img src={Typing} alt="" />
             </span>
             <div className="flex items-center justify-center text-white text-4xl gap-2 font-bold">
               {Typing_Calculation()}{" "}
@@ -781,7 +920,10 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
                     duration: 0.5, // Adjusted duration for smoother transition
                   });
                 }}
-                className="relative cursor-default "
+                onClick={() => {
+                  setGraphSelection(`${dynamicPropertiesAddition[index].name}`);
+                }}
+                className={`relative cursor-pointer ${graphSelection === `${dynamicPropertiesAddition[index].name}` ? "border-2 rounded-lg border-[#ECA5F8] p-3" : ""}  `}
               >
                 <span className="flex items-center justify-center text-[#ECA5F8] text-2xl gap-2">
                   {instances.name} <img src={instances.svg} alt="" />
@@ -861,8 +1003,18 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           })}
         </div>
       </div>{" "}
-      <div className="w-full">
-        <Analysis_Graphs></Analysis_Graphs>
+      <div className="w-full mt-32">
+        <Analysis_Graphs
+          accuracyCalculated={accuracyCalculated}
+          typingCalculated={typingCalculated}
+          correctEntriesCalculted={correctEntriesCalculted}
+          wrongEntriesCalculted={wrongEntriesCalculted}
+          skippedEntriesCalculted={skippedEntriesCalculted}
+          timediffrence={props.timeDiffrences}
+          correctionBehaviourCalculated={correctionBehaviourCalculated}
+          WordIndexStateArray={props.WordIndexStateArray}
+          allWords={props.allWords}
+        ></Analysis_Graphs>
       </div>
     </React.Fragment>
   );
