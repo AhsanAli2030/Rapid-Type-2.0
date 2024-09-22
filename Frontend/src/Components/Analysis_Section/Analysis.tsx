@@ -1014,6 +1014,7 @@ const Analysis: React.FC<AnalysisPropsInterface> = (props) => {
           correctionBehaviourCalculated={correctionBehaviourCalculated}
           WordIndexStateArray={props.WordIndexStateArray}
           allWords={props.allWords}
+          graphSelection={graphSelection}
         ></Analysis_Graphs>
       </div>
     </React.Fragment>
