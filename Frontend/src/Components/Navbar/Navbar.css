@@ -36,3 +36,6 @@
     background: rgba(0, 0, 0, 0.17);
     backdrop-filter: blur(60.4px);
 }
+.no-image {
+    background-image: none;
+}

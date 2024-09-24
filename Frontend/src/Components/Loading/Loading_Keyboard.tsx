@@ -18,7 +18,6 @@ function Loading_Keyboard() {
     let mixer: THREE.AnimationMixer | undefined;
 
     gltfLoader.load("./3D_Models/keyboard_animations.glb", (gltf) => {
-     
       gltf.scene.scale.set(4.5, 4.5, 4.5);
       // glrf.scene.rotation.set()
       mixer = new THREE.AnimationMixer(gltf.scene);
@@ -48,7 +47,8 @@ function Loading_Keyboard() {
     scene.add(light);
 
     // Renderer setup
-    const target = document.querySelector<HTMLCanvasElement>("#loadingCanvas") || undefined;
+    const target =
+      document.querySelector<HTMLCanvasElement>("#loadingCanvas") || undefined;
     const renderer = new THREE.WebGLRenderer({
       canvas: target,
       antialias: true,
@@ -63,7 +63,7 @@ function Loading_Keyboard() {
     // Animation loop
     let animationFrameId: number;
     const tick = () => {
-    //   controls.update();
+      //   controls.update();
       if (mixer) mixer.update(0.02);
       renderer.render(scene, camera);
       animationFrameId = requestAnimationFrame(tick);
@@ -73,7 +73,7 @@ function Loading_Keyboard() {
     // Cleanup function
     return () => {
       cancelAnimationFrame(animationFrameId);
-    //   controls.dispose();
+      //   controls.dispose();
       renderer.dispose();
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh) {

@@ -5,6 +5,7 @@ import { Suspense, lazy } from "react";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 const App = lazy(() => import("./App"));
+const SignUp = lazy(() => import("./Pages/Authentication/SignUp"));
 import Loading_Sphere from "./Components/Loading/Loading_Sphere";
 // import Loading_Keyboard from "./Components/Loading/Loading_Keyboard";
 // import Testing from "./Components/Testing/Testing";
@@ -20,6 +21,17 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Loading_Sphere />}>
         <App />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/get-started",
+    // element: <Loading_Keyboard />,
+    // element: <Analysis />,
+    // element: <Testing />,
+    element: (
+      <Suspense fallback={<Loading_Sphere />}>
+        <SignUp />
       </Suspense>
     ),
   },

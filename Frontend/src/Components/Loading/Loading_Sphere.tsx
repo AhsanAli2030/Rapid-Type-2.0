@@ -43,9 +43,10 @@ function Loading_Sphere() {
     scene.add(light);
 
     // Renderer setup
-    const target = document.querySelector<HTMLCanvasElement>("#loadingCanvas") || undefined;
+    const target =
+      document.querySelector<HTMLCanvasElement>("#loadingCanvas") || undefined;
 
-     const renderer= new THREE.WebGLRenderer({
+    const renderer = new THREE.WebGLRenderer({
       canvas: target,
       antialias: true,
       alpha: true,
@@ -58,7 +59,7 @@ function Loading_Sphere() {
 
     // Animation loop
     const tick = () => {
-    //   control.update();
+      //   control.update();
       sphere.rotation.y += 0.01;
       sphere.rotation.x += 0.01;
       sphere.rotation.z += 0.01;
@@ -70,9 +71,9 @@ function Loading_Sphere() {
 
     // Cleanup function
     return () => {
-    //   control.dispose();
+      //   control.dispose();
       renderer.dispose();
-    
+
       scene.remove(sphere);
       geometry.dispose();
       material.dispose();
@@ -94,11 +95,17 @@ function Loading_Sphere() {
     <React.Fragment>
       <div className="w-screen h-screen flex flex-col items-center justify-center -m-32 ml-8">
         <canvas id="loadingCanvas"></canvas>
-        <div className="-m-32 font-lexend text-[#C3C3C3] font-bold text-center text-shadow-heading text-3xl flex gap-3">
+        <div className="-m-24 font-lexend text-[#C3C3C3] font-bold text-center text-shadow-heading text-3xl flex gap-3">
           <span>Loading</span>
-          <span className="dot-animation opacity-0">.</span>
-          <span className="dot-animation opacity-0">.</span>
-          <span className="dot-animation opacity-0">.</span>
+          <span className="dot-animation opacity-0 text-[80px] text-center -mt-5">
+            .
+          </span>
+          <span className="dot-animation opacity-0 text-[80px] text-center -mt-5">
+            .
+          </span>
+          <span className="dot-animation opacity-0 text-[80px] text-center -mt-5">
+            .
+          </span>
         </div>
       </div>
     </React.Fragment>

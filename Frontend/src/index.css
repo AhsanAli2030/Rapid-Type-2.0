@@ -6,6 +6,10 @@ html,
 body {
     margin: 0;
     padding: 0;
+}
+.body {
+    margin: 0;
+    padding: 0;
     overflow-x: hidden;
     background-image: url("./assets/static_files/background_pic.png");
     background-size: cover;
@@ -46,4 +50,65 @@ body {
         2px 2px 6px rgba(255, 255, 255, 0.4);
 
     backdrop-filter: blur(6.8px);
+}
+
+.bg-image {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-image: url("./assets/static_files/background_pic.png");
+    background-size: cover;
+    background-position: center;
+    width: 50%;
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+.background-signup {
+    background: linear-gradient(
+            154.65deg,
+            rgba(0, 56, 255, 0.35) 15.55%,
+            rgba(158, 0, 255, 0.35) 51.06%,
+            rgba(255, 0, 245, 0.35) 86.58%
+        ),
+        #000000;
+}
+
+.welcome-side-signup {
+    background: linear-gradient(
+        124.76deg,
+        #001e86 3.88%,
+        #5c0094 47.39%,
+        #980092 93.58%
+    );
+    box-shadow:
+        -4px -4px 30px 20px rgba(0, 0, 0, 0.25),
+        inset 4px 4px 100px rgba(255, 255, 255, 0.5);
+    border-radius: 216px;
+}
+
+.or-lines {
+    position: relative;
+    display: inline-block;
+    padding: 0 1rem; /* Space between lines and text */
+}
+
+.or-lines::before,
+.or-lines::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 200px; /* Adjust length of the line */
+    height: 2px; /* Adjust thickness of the line */
+    background-color: #ffffff; /* Adjust color of the line */
+}
+
+.or-lines::before {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.or-lines::after {
+    right: 0;
+    transform: translateX(100%);
 }

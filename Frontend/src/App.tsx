@@ -149,103 +149,105 @@ function App() {
 
   return (
     <React.Fragment>
-      <Navbar></Navbar>
-      <div className="w-screen h-20 "></div>
-      <div className=" w-screen h-auto flex flex-col gap-3">
-        <div className="w-screen h-auto font-lexend text-[#C3C3C3] font-bold text-center">
-          <div className="   mt-10 text-shadow-heading  text-2xl font-extrabold md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl">
-            {animationArray.map((characters, index) => {
-              return (
-                <span
-                  key={index}
-                  className="checkFingers opacity-0 inline-block"
-                  style={{ display: "inline-block" }}
-                >
-                  {characters === " " ? "\u00A0" : characters}
-                </span>
-              );
-            })}
+      <div className="w-full h-full">
+        <Navbar></Navbar>
+        <div className="w-screen h-20 "></div>
+        <div className=" w-screen h-auto flex flex-col gap-3">
+          <div className="w-screen h-auto font-lexend text-[#C3C3C3] font-bold text-center">
+            <div className="   mt-10 text-shadow-heading  text-2xl font-extrabold md:text-4xl lg:text-6xl xl:text-7xl 2xl:text-8xl">
+              {animationArray.map((characters, index) => {
+                return (
+                  <span
+                    key={index}
+                    className="checkFingers opacity-0 inline-block"
+                    style={{ display: "inline-block" }}
+                  >
+                    {characters === " " ? "\u00A0" : characters}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="2xl:mt-8  text-shadow-heading shortHeading opacity-0 text-md md:text-xl lg:text-2xl xl:text-3xl xl:mt-6  mt-4">
+              Enhance your typing speed and accuracy! Track your progress and
+              beat your personal best!
+            </div>
           </div>
-          <div className="2xl:mt-8  text-shadow-heading shortHeading opacity-0 text-md md:text-xl lg:text-2xl xl:text-3xl xl:mt-6  mt-4">
-            Enhance your typing speed and accuracy! Track your progress and beat
-            your personal best!
-          </div>
-        </div>
 
-        <div className=" w-screen flex items-center justify-center ">
-          <canvas
-            id="canvasElement"
-            className=" -mt-24 md:-mt-12 lg:-mt-0"
-          ></canvas>
-        </div>
-        <div className="w-screen flex flex-col  justify-center  items-center -mt-16 lg:-mt-4">
-          <div className="w-80  flex flex-col lg:flex-row lg:w-screen  gap-8 justify-center items-center ">
-            <div
-              id="hover-animation"
-              onMouseEnter={() => {
-                gsap.to("#hover-animation", {
-                  scale: 1.15,
-                  duration: 0.6,
-                  background:
-                    " linear-gradient(99.98deg,#001e86 4.09%,#5c0094 52.77%,#980092 104.46%)",
-                  ease: "power1.inOut",
-                });
-              }}
-              onMouseLeave={() => {
-                gsap.to("#hover-animation", {
-                  scale: 1,
-                  duration: 0.6,
-                  background: "rgba(0, 0, 0, 0.3)",
-                  ease: "power1.inOut",
-                });
-              }}
-              className="2xl:w-44 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
+          <div className=" w-screen flex items-center justify-center ">
+            <canvas
+              id="canvasElement"
+              className=" -mt-24 md:-mt-12 lg:-mt-0"
+            ></canvas>
+          </div>
+          <div className="w-screen flex flex-col  justify-center  items-center -mt-16 lg:-mt-4">
+            <div className="w-80  flex flex-col lg:flex-row lg:w-screen  gap-8 justify-center items-center ">
+              <div
+                id="hover-animation"
+                onMouseEnter={() => {
+                  gsap.to("#hover-animation", {
+                    scale: 1.15,
+                    duration: 0.6,
+                    background:
+                      " linear-gradient(99.98deg,#001e86 4.09%,#5c0094 52.77%,#980092 104.46%)",
+                    ease: "power1.inOut",
+                  });
+                }}
+                onMouseLeave={() => {
+                  gsap.to("#hover-animation", {
+                    scale: 1,
+                    duration: 0.6,
+                    background: "rgba(0, 0, 0, 0.3)",
+                    ease: "power1.inOut",
+                  });
+                }}
+                className="2xl:w-44 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
               box-shadow buttons-background w-64 h-16 text-xl -mt-12 md:-mt-0 "
-            >
-              <span className="down-arrow ">👇🏻</span>
-              <div className="text-white"> Try a Demo</div>
-            </div>{" "}
-            <div
-              className="2xl:w-72 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
+              >
+                <span className="down-arrow ">👇🏻</span>
+                <div className="text-white"> Try a Demo</div>
+              </div>{" "}
+              <div
+                className="2xl:w-72 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
                 box-shadow buttons-background w-64 h-16 text-xl"
-            >
-              <div>👥</div>
-              <div className="text-white"> Total Members : 0</div>
-            </div>{" "}
-            <div
-              id="hover-animation-subscribe"
-              onMouseEnter={() => {
-                gsap.to("#hover-animation-subscribe", {
-                  scale: 1.15,
-                  duration: 0.6,
-                  background:
-                    " linear-gradient(99.98deg,#001e86 4.09%,#5c0094 52.77%,#980092 104.46%)",
-                  ease: "power1.inOut",
-                });
-              }}
-              onMouseLeave={() => {
-                gsap.to("#hover-animation-subscribe", {
-                  scale: 1,
-                  duration: 0.6,
-                  background: "rgba(0, 0, 0, 0.3)",
-                  ease: "power1.inOut",
-                });
-              }}
-              className="2xl:w-44 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
+              >
+                <div>👥</div>
+                <div className="text-white"> Total Members : 0</div>
+              </div>{" "}
+              <div
+                id="hover-animation-subscribe"
+                onMouseEnter={() => {
+                  gsap.to("#hover-animation-subscribe", {
+                    scale: 1.15,
+                    duration: 0.6,
+                    background:
+                      " linear-gradient(99.98deg,#001e86 4.09%,#5c0094 52.77%,#980092 104.46%)",
+                    ease: "power1.inOut",
+                  });
+                }}
+                onMouseLeave={() => {
+                  gsap.to("#hover-animation-subscribe", {
+                    scale: 1,
+                    duration: 0.6,
+                    background: "rgba(0, 0, 0, 0.3)",
+                    ease: "power1.inOut",
+                  });
+                }}
+                className="2xl:w-44 2xl:h-16 2xl:text-xl flex gap-2 items-center justify-center rounded-3xl  cursor-pointer bg-blend-color-burn font-inter font-bold
                 box-shadow buttons-background w-64 h-16 text-xl"
-            >
-              <span className="subscribe ">🔔</span>
-              <div className="text-white"> Subscribe</div>
-            </div>{" "}
+              >
+                <span className="subscribe ">🔔</span>
+                <div className="text-white"> Subscribe</div>
+              </div>{" "}
+            </div>
           </div>
         </div>
+
+        <Suspense fallback={<Loading_Sphere />}>
+          <Testing />
+        </Suspense>
+
+        <About />
       </div>
-
-      <Suspense fallback={<Loading_Sphere />}>
-        <Testing />
-      </Suspense>
-
-      <About />
     </React.Fragment>
   );
 }
