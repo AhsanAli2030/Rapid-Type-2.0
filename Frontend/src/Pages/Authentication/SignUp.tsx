@@ -6,8 +6,9 @@ import facebook from "../../assets/static_files/logos_facebook.svg";
 import google from "../../assets/static_files/devicon_google.png";
 import axios from "axios";
 import TextField from "@mui/material/TextField"; // Import TextField
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AuthenticationActions } from "../../Store/Authentcation";
+
 const SignUp = () => {
   const dispatch = useDispatch();
   const [signUpData, setSignUpData] = React.useState<{
@@ -21,6 +22,15 @@ const SignUp = () => {
     email: string;
     password: string;
   }>({ email: "", password: "" });
+  const [forgotData, setForgotData] = React.useState<{
+    email: string;
+  }>({ email: "" });
+  const [newPasswordData, setNewPasswordData] = React.useState<{
+    re_password: string;
+    password: string;
+  }>({ re_password: "", password: "" });
+
+  const { passwordChanging } = useSelector((store) => store.Authentication);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,6 +39,45 @@ const SignUp = () => {
   const handleSubmitSignIN = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signIn_backend(signInData);
+  };
+  const handleSubmitNewPassword = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    Reset_Password(newPasswordData);
+  };
+
+  const Reset_Password = async (data: {
+    password: string;
+    re_password: string;
+  }) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const dataSendToBackend = {
+      uid: passwordChanging.uid,
+      token: passwordChanging.token,
+      new_password: data.password,
+      re_new_password: data.re_password,
+    };
+    console.log(dataSendToBackend);
+    const body = JSON.stringify(dataSendToBackend);
+
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/auth/users/reset_password_confirm/`,
+        body,
+        config,
+      );
+      console.log("changed confirm", res);
+      // dispatch({
+      //     type: PASSWORD_RESET_CONFIRM_SUCCESS
+      // });
+    } catch (err) {
+      // dispatch({
+      //     type: PASSWORD_RESET_CONFIRM_FAIL
+      // });
+    }
   };
 
   const signup_backend = async (data: {
@@ -154,6 +203,36 @@ const SignUp = () => {
     }
   };
 
+  const handleSubmitForgot = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    ResetPassword_backend(forgotData);
+  };
+  const ResetPassword_backend = async (data: { email: string }) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const body = JSON.stringify(data);
+
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/auth/users/reset_password/`,
+        body,
+        config,
+      );
+      console.log("reset", res);
+      // dispatch({
+      //     type: PASSWORD_RESET_SUCCESS
+      // });
+    } catch (err) {
+      // dispatch({
+      //     type: PASSWORD_RESET_FAIL
+      // });
+    }
+  };
+
   const [animationSigning, setAnimationsSigning] = React.useState<string>("");
   React.useEffect(() => {
     if (animationSigning === "signup_animation") {
@@ -255,6 +334,14 @@ const SignUp = () => {
         });
     }
   }, [animationSigning]);
+  const [forgotPassword, setForgotPassword] = React.useState<boolean>(false);
+  const [newPasswordEnter, setNewPasswordEnter] = React.useState(false);
+  React.useEffect(() => {
+    if (passwordChanging.uid !== "" && passwordChanging.token !== "") {
+      setNewPasswordEnter(true);
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <div className="w-full h-screen background-signup flex items-center justify-start relative">
@@ -530,7 +617,10 @@ const SignUp = () => {
         </div>
 
         <div className="w-1/2 ">
-          <div className="w-full " id="sign-in">
+          <div
+            className={`w-full ${newPasswordEnter ? "h-0 overflow-hidden" : ""}`}
+            id="sign-in"
+          >
             <div className="text-center font-lexend text-white flex flex-col items-center justify-center gap-4">
               <span className="text-2xl text-shadow-heading">Sign in with</span>
               <div className="flex gap-4">
@@ -540,7 +630,7 @@ const SignUp = () => {
               <span className="text-2xl text-shadow-heading or-lines">or</span>
             </div>
 
-            <div className="flex flex-col text-white items-center justify-center">
+            <div className=" flex flex-col text-white items-center justify-center">
               <form
                 onSubmit={handleSubmitSignIN}
                 className="flex flex-col items-center justify-center"
@@ -612,7 +702,29 @@ const SignUp = () => {
                       },
                     }}
                   />
-                  <button type="button">Forgot Your password ?</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotPassword(true);
+                      const forgotButtonTimeline = gsap.timeline();
+                      forgotButtonTimeline
+                        .to("#sign-in", {
+                          duration: 0.5,
+                          ease: "power1.inOut",
+                          height: "0",
+
+                          overflow: "hidden",
+                        })
+                        .to("#forgot-password", {
+                          duration: 0.5,
+                          ease: "power1.inOut",
+                          paddingTop: "10px",
+                          height: "auto",
+                        });
+                    }}
+                  >
+                    Forgot Your password ?
+                  </button>
                 </div>
 
                 <button
@@ -637,6 +749,220 @@ const SignUp = () => {
                   className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded "
                 >
                   Sign In
+                </button>
+              </form>
+            </div>
+          </div>
+          <div
+            className="w-full h-0 overflow-hidden  mt-6"
+            id="forgot-password"
+          >
+            <div className=" flex flex-col text-white items-center justify-center">
+              <form
+                onSubmit={handleSubmitForgot}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="mb-4">
+                  <div className="flex w-full gap-3">
+                    <TextField
+                      id="email-forgot"
+                      label="Forgot Email "
+                      type="email"
+                      variant="outlined"
+                      fullWidth
+                      value={forgotData.email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setForgotData((previousValue) => ({
+                          ...previousValue,
+                          email: e.target.value,
+                        }));
+                      }}
+                      sx={{
+                        input: {
+                          backgroundColor: "transparent",
+                          color: "white",
+                        },
+                        label: { color: "#C3C3C3" },
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: "#C3C3C3",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "#007bff",
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#1976D2",
+                          },
+                        },
+                      }}
+                    />
+                    <button
+                      id="fogot-btn"
+                      type="submit"
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold  px-4 rounded w-28"
+                    >
+                      Send
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    {" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForgotPassword(false);
+                        const forgotButtonTimeline = gsap.timeline();
+
+                        forgotButtonTimeline
+                          .to("#forgot-password", {
+                            duration: 0.5,
+                            ease: "power1.inOut",
+
+                            height: "0",
+
+                            overflow: "hidden",
+                          })
+                          .to("#sign-in", {
+                            duration: 0.5,
+                            ease: "power1.inOut",
+
+                            height: "auto",
+                          });
+                      }}
+                    >
+                      Sign in to account ?
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div
+            className={`w-full ${!newPasswordEnter ? "h-0 overflow-hidden" : ""}`}
+            id="new-password"
+          >
+            <div className=" flex flex-col text-white items-center justify-center">
+              <form
+                onSubmit={handleSubmitNewPassword}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="mb-4 mt-4 w-full">
+                  <TextField
+                    id="new-password-textfield"
+                    label="New Passsword"
+                    variant="outlined"
+                    fullWidth
+                    type="password"
+                    value={newPasswordData.password}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setNewPasswordData((previousValue) => ({
+                        ...previousValue,
+                        password: e.target.value,
+                      }));
+                    }}
+                    sx={{
+                      input: {
+                        backgroundColor: "transparent",
+                        color: "white",
+                      },
+                      label: { color: "#C3C3C3" },
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#C3C3C3",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#007bff",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1976D2",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <TextField
+                    id="renew-password-textfield"
+                    label="Confirm Password"
+                    type="password"
+                    variant="outlined"
+                    fullWidth
+                    value={newPasswordData.re_password}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setNewPasswordData((previousValue) => ({
+                        ...previousValue,
+                        re_password: e.target.value,
+                      }));
+                    }}
+                    sx={{
+                      input: {
+                        backgroundColor: "transparent",
+                        color: "white",
+                      },
+                      label: { color: "#C3C3C3" },
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#C3C3C3",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#007bff",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#1976D2",
+                        },
+                      },
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotPassword(false);
+                      const forgotButtonTimeline = gsap.timeline();
+
+                      forgotButtonTimeline
+                        .to("#new-password", {
+                          duration: 0.5,
+                          ease: "power1.inOut",
+
+                          height: "0",
+
+                          overflow: "hidden",
+                        })
+                        .to("#sign-in", {
+                          duration: 0.5,
+                          ease: "power1.inOut",
+
+                          height: "auto",
+                        });
+                    }}
+                  >
+                    Back to Sign In ?
+                  </button>
+                </div>
+
+                <button
+                  id="changing-password-btn"
+                  onMouseEnter={() => {
+                    gsap.to("#changing-password-btn", {
+                      scale: 1.15,
+                      duration: 0.4,
+
+                      ease: "power1.inOut",
+                    });
+                  }}
+                  onMouseLeave={() => {
+                    gsap.to("#changing-password-btn", {
+                      scale: 1,
+                      duration: 0.4,
+
+                      ease: "power1.inOut",
+                    });
+                  }}
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded "
+                >
+                  Change
                 </button>
               </form>
             </div>

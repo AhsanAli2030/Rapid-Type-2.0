@@ -9,20 +9,16 @@ gsap.registerPlugin(useGSAP);
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { AuthenticationActions } from "../../Store/Authentcation";
 function Loading_Sphere() {
-  const { newUserCreatedData } = useSelector((store) => store.Authentication);
-  const { newUserActivatedData } = useSelector((store) => store.Authentication);
+  // const { newUserCreatedData } = useSelector((store) => store.Authentication);
+  // const { newUserActivatedData } = useSelector((store) => store.Authentication);
   const dispatch = useDispatch();
   const [verified, setVerified] = React.useState(false);
-  const { uid, token } = useParams();
+  const { uid, token, identifier } = useParams();
   const navigate = useNavigate();
-  React.useEffect(() => {
-    if (newUserCreatedData && newUserActivatedData) {
-      navigate("/get-started");
-    }
-  }, [newUserCreatedData, newUserActivatedData]);
+
   useEffect(() => {
     // Create the scene
     const scene = new THREE.Scene();
@@ -97,10 +93,20 @@ function Loading_Sphere() {
   }, []);
 
   useEffect(() => {
-    if (uid && token) {
+    console.log(uid, token, identifier);
+    if (identifier === "password-change") {
+      dispatch(
+        AuthenticationActions.passwordChangeReducer({
+          uid: uid,
+          token: token,
+        }),
+      );
+      navigate("/get-started");
+    } else if (identifier === "account-activate") {
       VerifyUser();
 
       setVerified(true);
+      navigate("/get-started");
     }
   }, []);
 

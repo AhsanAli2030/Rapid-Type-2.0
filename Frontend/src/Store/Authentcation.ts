@@ -7,6 +7,10 @@ const AuthenticationSlice = createSlice({
     newUserActivatedData: false,
     newUserLoginSuccess: false,
     newUserLoadedSuccess: false,
+    passwordChanging: {
+      uid: "",
+      token: "",
+    },
   },
   reducers: {
     newUserCreatedRed: (state, action) => {
@@ -18,6 +22,10 @@ const AuthenticationSlice = createSlice({
       state.newUserCreatedData = true;
       state.newUserActivatedData = true;
       state.newUserLoadedSuccess = action.payload.loaded;
+    },
+    passwordChangeReducer: (state, action) => {
+      state.passwordChanging.uid = action.payload.uid;
+      state.passwordChanging.token = action.payload.token;
     },
   },
 });
