@@ -4,9 +4,25 @@ import * as THREE from "three";
 import "../../index.css";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useParams } from "react-router-dom"; // Import useParams
 gsap.registerPlugin(useGSAP);
-
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { AuthenticationActions } from "../../Store/Authentcation";
 function Loading_Sphere() {
+  const { newUserCreatedData } = useSelector((store) => store.Authentication);
+  const { newUserActivatedData } = useSelector((store) => store.Authentication);
+  const dispatch = useDispatch();
+  const [verified, setVerified] = React.useState(false);
+  const { uid, token } = useParams();
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    if (newUserCreatedData && newUserActivatedData) {
+      navigate("/get-started");
+    }
+  }, [newUserCreatedData, newUserActivatedData]);
   useEffect(() => {
     // Create the scene
     const scene = new THREE.Scene();
@@ -80,6 +96,48 @@ function Loading_Sphere() {
     };
   }, []);
 
+  useEffect(() => {
+    if (uid && token) {
+      VerifyUser();
+
+      setVerified(true);
+    }
+  }, []);
+
+  const VerifyUser = async () => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const body = JSON.stringify({ uid, token });
+
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/auth/users/activation/`,
+        body,
+        config,
+      );
+      if (res.status === 204) {
+        dispatch(
+          AuthenticationActions.newUserCreatedRed({
+            created: true,
+            activated: true,
+          }),
+        );
+      }
+
+      // dispatch({
+      //     type: ACTIVATION_SUCCESS,
+      // });
+    } catch (err) {
+      //     dispatch({
+      //         type: ACTIVATION_FAIL
+      //     })
+    }
+  };
+
   useGSAP(() => {
     gsap.to(".dot-animation", {
       duration: 1,
@@ -97,6 +155,7 @@ function Loading_Sphere() {
         <canvas id="loadingCanvas"></canvas>
         <div className="-m-24 font-lexend text-[#C3C3C3] font-bold text-center text-shadow-heading text-3xl flex gap-3">
           <span>Loading</span>
+
           <span className="dot-animation opacity-0 text-[80px] text-center -mt-5">
             .
           </span>

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'djoser',
     'Testing_Strings.apps.TestingStringsConfig',
     'Authentication.apps.AuthenticationConfig',
 ]
@@ -139,7 +140,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL='Authentication.UserAccount'
 
-EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+
+
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587
 EMAIL_HOST_USER='piratesunny2030@gmail.com'
@@ -155,21 +158,32 @@ REST_FRAMEWORK={
 SIMPLE_JWT={
     'AUTH_HEADER_TYPES':('JWT',),
 }
+
+
 DJOSER={
-    'LOGIN_FIELD':'email',
-    'USER_CREATE_PASSWORD_RETYPE':True,
-    'USERNAME_CHANGED_EMAIL_CONFIRMATION':True,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
-    'SEND_CONFIRMATION_EMAIL':True,
-    'SET_USERNAME_RETYPE':True,
-    'SET_PASSWORD_RETYPE':True,
-    'PASSWORD_RESET_CONFIRM_URL':'password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL':'email/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL':'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL':True,
-    'SERIALIZERS':{
-        'user_create':'Authentication.Authentication_Serializers.UserCreateSerializer',
-        'user':'Authentication.Authentication_Serializers.UserCreateSerializer',
-        'user_delete':'djoser.serializers.UserDeleteSerializer',
-    }
+  'LOGIN_FIELD':'email',
+  'USER_CREATE_PASSWORD_RETYPE':True,
+  'USERNAME_CHANGED_EMAIL_CONFIRMATION':True,
+  'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
+  'SEND_CONFIRMATION_EMAIL':True,
+  'SET_USERNAME_RETYPE':True,
+  'SET_PASSWORD_RETYPE':True,
+  'PASSWORD_RESET_CONFIRM_URL':'password/reset/confirm/{uid}/{token}',
+  'USERNAME_RESET_CONFIRM_URL':'email/reset/confirm/{uid}/{token}',
+  'ACTIVATION_URL':'activate/{uid}/{token}',
+  'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost:8000','http://localhost:5173','http://localhost:8000/google'],
+  'SEND_ACTIVATION_EMAIL':True,
+  'SERIALIZERS':{
+      'user_create':'Authentication.Authentication_Serializers.UserCreateSerializer',
+      'user':'Authentication.Authentication_Serializers.UserCreateSerializer',
+       'current_user':'Authentication.Authentication_Serializers.UserCreateSerializer',
+      'user_delete':'djoser.serializers.UserDeleteSerializer',
+  }
+
+
+
+
+
+
 }

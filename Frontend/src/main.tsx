@@ -7,6 +7,8 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 const App = lazy(() => import("./App"));
 const SignUp = lazy(() => import("./Pages/Authentication/SignUp"));
 import Loading_Sphere from "./Components/Loading/Loading_Sphere";
+import { Provider } from "react-redux";
+import AuthenticationStore from "./Store/MainStore";
 // import Loading_Keyboard from "./Components/Loading/Loading_Keyboard";
 // import Testing from "./Components/Testing/Testing";
 // import Analysis from "./Components/Analysis_Section/Analysis";
@@ -35,10 +37,19 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  {
+    path: "activate/:uid/:token/",
+    // element: <Loading_Keyboard />,
+    // element: <Analysis />,
+    // element: <Testing />,
+    element: <Loading_Sphere />,
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={AuthenticationStore}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 );
